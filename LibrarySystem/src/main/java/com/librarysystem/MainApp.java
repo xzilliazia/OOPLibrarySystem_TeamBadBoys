@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 public class MainApp extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/librarysystem/fxml/hello-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/librarysystem/hello-view.fxml"));
         Parent root = fxmlLoader.load(); // Load the FXML
         Scene scene = new Scene(root, 800, 600); // Create the scene with the loaded root
         primaryStage.setTitle("Library System");

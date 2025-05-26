@@ -5,6 +5,7 @@ module com.librarysystem {
     requires org.controlsfx.controls;
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
+    requires java.desktop;
 
     opens com.librarysystem to javafx.fxml;
     exports com.librarysystem;

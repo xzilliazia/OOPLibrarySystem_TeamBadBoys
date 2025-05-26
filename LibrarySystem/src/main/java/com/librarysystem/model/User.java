@@ -1,53 +1,18 @@
 package com.librarysystem.model;
 
 import com.librarysystem.action.Authenticatable;
+import javafx.stage.Stage;
 
-public abstract class User implements Authenticatable {
-    private String id;
-    private String name;
-    private String username;
-    private String password;
+import java.awt.print.Book;
+import java.util.ArrayList;
 
-    public User(String id, String name, String username, String password) {
-        this.id = id;
-        this.name = name;
-        this.username = username;
-        this.password = password;
+public abstract class User {
+    private static ArrayList<Book> bookList = new ArrayList<>();
+    public abstract String updateBook(Stage stage);
+    public void addBook(Book book) {
+        bookList.add(book);
     }
 
-    public String getId() {
-        return id;
-    }
-    public String getName() {
-        return name;
-    }
-    public String getUsername() {
-        return username;
-    }
-    public String getPassword() {
-        return password;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public void setUsername(String username) {
-        this.username = username;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public boolean login(String username, String password) {
-        return false;
-    }
-    @Override
-    public void logout() {
-    }
-    public abstract String getRole();
 
 }
