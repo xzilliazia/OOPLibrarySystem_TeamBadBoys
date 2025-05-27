@@ -21,6 +21,15 @@ public class ProBook {
         this.stock = new SimpleIntegerProperty(stock);
     }
 
+    public static ArrayList<ProBook> bookToBind(ArrayList<Book> ary) {
+        ArrayList<ProBook> e = new ArrayList<>();
+        for (Book b : ary){
+            ProBook j = new ProBook(b.getBookId(),b.getTitle(),b.getAuthor(),b.getCategory(),b.getStock());
+            e.add(j);
+        }
+        return e;
+    }
+
     //getters
     public String getId() {
         return id.get();
@@ -69,14 +78,5 @@ public class ProBook {
     }
     public SimpleIntegerProperty stockProperty() {
         return stock;
-    }
-
-    public static ArrayList<ProBook> bookToBind(ArrayList<Book> ary) {
-        ArrayList<ProBook> e = new ArrayList<>();
-        for (Book b : ary){
-            ProBook j = new ProBook(b.getBookId(),b.getTitle(),b.getAuthor(),b.getCategory(),b.getStock());
-            e.add(j);
-        }
-        return e;
     }
 }
