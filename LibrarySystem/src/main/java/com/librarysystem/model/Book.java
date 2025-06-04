@@ -1,4 +1,4 @@
-package com.librarysystem.books;
+package com.librarysystem.model;
 
 public class Book {
     private String bookId, title, author, category;

@@ -62,4 +62,9 @@ public class PropertyBook {
     public SimpleIntegerProperty stockProperty() {
         return stock;
     }
+
+    public Book toBook() {
+        return new Book(getId(), getTitle(), getAuthor(), getCategory(), getStock());
+    }
+
 }
