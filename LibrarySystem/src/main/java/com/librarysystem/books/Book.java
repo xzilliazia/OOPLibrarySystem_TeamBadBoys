@@ -27,21 +27,4 @@ public class Book {
         return stock;
     }
 
-    public void setBookId(String bookId) {
-        this.bookId = bookId;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-    public void setCategory(String category) {
-        this.category = category;
-    }
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-
 }
