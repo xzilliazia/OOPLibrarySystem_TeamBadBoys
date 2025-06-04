@@ -1,12 +1,9 @@
 package com.librarysystem.service;
 
-import com.librarysystem.books.Book;
+import com.librarysystem.model.Book;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 public class BookUtil {
     private static final String FILE_NAME = "data/books.csv";
