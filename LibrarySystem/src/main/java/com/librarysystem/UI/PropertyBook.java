@@ -1,19 +1,19 @@
 package com.librarysystem.UI;
 
-import com.librarysystem.books.Book;
+import com.librarysystem.model.Book;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import java.util.ArrayList;
 
-public class ProBook {
+public class PropertyBook {
     private SimpleStringProperty id;
     private SimpleStringProperty title;
     private SimpleStringProperty author;
     private SimpleStringProperty category;
     private SimpleIntegerProperty stock;
 
-    ProBook(String id,String title, String author, String category, int stock) {
+    PropertyBook(String id, String title, String author, String category, int stock) {
         this.id = new SimpleStringProperty(id);
         this.title = new SimpleStringProperty(title);
         this.author = new SimpleStringProperty(author);
@@ -21,10 +21,10 @@ public class ProBook {
         this.stock = new SimpleIntegerProperty(stock);
     }
 
-    public static ArrayList<ProBook> bookToBind(ArrayList<Book> ary) {
-        ArrayList<ProBook> e = new ArrayList<>();
+    public static ArrayList<PropertyBook> bookToBind(ArrayList<Book> ary) {
+        ArrayList<PropertyBook> e = new ArrayList<>();
         for (Book b : ary){
-            ProBook j = new ProBook(b.getBookId(),b.getTitle(),b.getAuthor(),b.getCategory(),b.getStock());
+            PropertyBook j = new PropertyBook(b.getBookId(),b.getTitle(),b.getAuthor(),b.getCategory(),b.getStock());
             e.add(j);
         }
         return e;
@@ -46,23 +46,6 @@ public class ProBook {
     public int getStock() {
         return stock.get();
     }
-    //sset
-    public void setId(String id) {
-        this.id.set(id);
-    }
-    public void setTitle(String title) {
-        this.title.set(title);
-    }
-    public void setAuthor(String author) {
-        this.author.set(author);
-    }
-    public void setCategory(String category) {
-        this.category.set(category);
-    }
-    public void setStock(int stock) {
-        this.stock.set(stock);
-    }
-
 
     public SimpleStringProperty idProperty() {
         return id;
