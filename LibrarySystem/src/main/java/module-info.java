@@ -1,5 +1,6 @@
 module com.librarysystem {
     requires javafx.controls;
+    requires java.sql;
 
     requires org.controlsfx.controls;
     requires org.kordamp.ikonli.javafx;
