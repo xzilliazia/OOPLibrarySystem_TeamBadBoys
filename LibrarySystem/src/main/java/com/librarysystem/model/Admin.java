@@ -55,7 +55,7 @@ public class Admin extends User {
 
         Scene scene = new Scene(root, 700, 500);
         stage.setScene(scene);
-        stage.setTitle("Admin Menu - Daftar Buku");
+        stage.setTitle("Daftar Buku");
         stage.show();
     }
 
