@@ -13,7 +13,7 @@ public class PropertyBook {
     private SimpleStringProperty category;
     private SimpleIntegerProperty stock;
 
-    PropertyBook(String id, String title, String author, String category, int stock) {
+    public PropertyBook(String id, String title, String author, String category, int stock) {
         this.id = new SimpleStringProperty(id);
         this.title = new SimpleStringProperty(title);
         this.author = new SimpleStringProperty(author);

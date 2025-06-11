@@ -25,7 +25,7 @@ public abstract class User {
         TableColumn<PropertyBook, String> titleColom = new TableColumn<>("Title"); titleColom.setCellValueFactory(new PropertyValueFactory<>("title"));
         TableColumn<PropertyBook, String> authorColom = new TableColumn<>("Author"); authorColom.setCellValueFactory(new PropertyValueFactory<>("author"));
         TableColumn<PropertyBook, String> categoryColom = new TableColumn<>("Category"); categoryColom.setCellValueFactory(new PropertyValueFactory<>("category"));
-        TableColumn<PropertyBook, Integer> stokColom = new TableColumn<>("Stok"); stokColom.setCellValueFactory(new PropertyValueFactory<>("stok"));
+        TableColumn<PropertyBook, Integer> stokColom = new TableColumn<>("Stock"); stokColom.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
         tableView.getColumns().addAll(idColom, titleColom, authorColom, categoryColom, stokColom);
 

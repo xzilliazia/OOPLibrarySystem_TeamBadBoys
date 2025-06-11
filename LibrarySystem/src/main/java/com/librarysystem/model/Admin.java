@@ -17,7 +17,7 @@ public class Admin extends User {
     public void menu(Stage stage) {
         //pencarian buku bt judul
         TextField searchField = new TextField();
-        searchField.setPromptText("cari berdasarkan judul...");
+        searchField.setPromptText("Cari...");
 
         //data buku yang ditampilkan
         ArrayList<PropertyBook> propertyBooks = PropertyBook.bookToBind(User.getBookList());
