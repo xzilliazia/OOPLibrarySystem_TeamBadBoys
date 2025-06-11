@@ -1,1 +1,6 @@
 id,title,author,category,stock
+B002,Clean Code,Robert C. Martin,Programming,3
+B003,To Kill a Mockingbird,Harper Lee,Fiction,4
+B004,1984,George Orwell,Classic,2
+B005,The Art of War,Sun Tzu,Philosophy,6
+B006,TEST,ADMIN,testing,2
