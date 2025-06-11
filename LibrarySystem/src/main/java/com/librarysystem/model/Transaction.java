@@ -1,6 +1,5 @@
 package com.librarysystem.model;
 
-import com.librarysystem.role.loanStatus;
 
 import java.time.LocalDate;
 
@@ -11,8 +10,6 @@ public abstract class Transaction {
     private LocalDate borrowDate;
     private LocalDate returnDate;
     private LocalDate dueDate;
-
-    private loanStatus status;
 
     public String getTransactionId() {
         return transactionId;
@@ -31,9 +28,6 @@ public abstract class Transaction {
     }
     public LocalDate getDueDate() {
         return dueDate;
-    }
-    public loanStatus getStatus() {
-        return status;
     }
 
     public void setTransactionId(String transactionId) {
@@ -54,9 +48,4 @@ public abstract class Transaction {
     public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
-    public void setStatus(loanStatus status) {
-        this.status = status;
-    }
-
-
 }

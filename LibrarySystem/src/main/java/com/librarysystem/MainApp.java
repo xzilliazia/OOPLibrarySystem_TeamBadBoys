@@ -26,7 +26,7 @@ import java.util.ArrayList;
 //    }
 //}
 
-//BookManager test function
+////BookManager test function
 public class MainApp{
     public static void main(String[] args) {
         Application.launch(BookManager.class, args);
