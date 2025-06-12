@@ -124,9 +124,6 @@ public class BookManager extends Application {
         Dialog<PropertyBook> dialog = new Dialog<>();
         dialog.setTitle("Add New Book");
 
-        Label lblId = new Label("ID: ");
-        TextField tfId = new TextField();
-
         Label lblTitle = new Label("Title: ");
         TextField tfTitle = new TextField();
 
@@ -142,8 +139,6 @@ public class BookManager extends Application {
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
-        grid.add(lblId, 0, 0);
-        grid.add(tfId, 1, 0);
         grid.add(lblTitle, 0, 1);
         grid.add(tfTitle, 1, 1);
         grid.add(lblAuthor, 0, 2);
@@ -162,7 +157,7 @@ public class BookManager extends Application {
                 try {
                     int stock = Integer.parseInt(tfStock.getText());
                     if (stock < 0) throw new NumberFormatException();
-                    return new PropertyBook(tfId.getText(), tfTitle.getText(), tfAuthor.getText(), tfCategory.getText(), stock);
+                    return new PropertyBook("", tfTitle.getText(), tfAuthor.getText(), tfCategory.getText(), stock);
                 } catch (NumberFormatException e) {
                     Alert alert = new Alert(Alert.AlertType.ERROR, "Stock must be a non-negative integer.");
                     alert.showAndWait();
