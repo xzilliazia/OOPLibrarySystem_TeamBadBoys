@@ -94,6 +94,7 @@ public class BookManager extends Application {
         stage.show();
 
     }
+
     //saya pisah kolom stoknya
     private TableColumn<PropertyBook, Integer> getPropertyBookIntegerTableColumn() {
         TableColumn<PropertyBook, Integer> colStock = new TableColumn<>("Stock");
@@ -169,6 +170,7 @@ public class BookManager extends Application {
         dialog.showAndWait().ifPresent(newBook -> {
             data.add(newBook);
             saveChanges();
+            tableView.refresh();
         });
     }
 
@@ -192,6 +194,9 @@ public class BookManager extends Application {
             books.add(new Book(pb.getId(), pb.getTitle(), pb.getAuthor(), pb.getCategory(), pb.getStock()));
         }
         BookUtil.saveBook(books);
+        for (int i = 0; i < propertyBooks.size(); i++) {
+            propertyBooks.get(i).idProperty().set(books.get(i).getBookId());
+        }
         Alert alert = new Alert(Alert.AlertType.INFORMATION, "Books saved successfully.");
         alert.showAndWait();
     }

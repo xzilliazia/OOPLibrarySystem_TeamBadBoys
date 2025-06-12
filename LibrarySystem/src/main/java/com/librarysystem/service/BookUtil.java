@@ -33,27 +33,47 @@ public class BookUtil {
     }
 
     public static void saveBook(ArrayList<Book> bookList) {
-        String sqlInsert = "INSERT INTO books (title, author, category, stock) VALUES (?, ?, ?, ?) " +
-                "ON CONFLICT (id) DO UPDATE SET title = EXCLUDED.title, author = EXCLUDED.author, " +
-                "category = EXCLUDED.category, stock = EXCLUDED.stock";
+        String sqlInsert = "INSERT INTO books (title, author, category, stock) " +
+                "VALUES (?, ?, ?, ?) RETURNING id";
 
-        try (Connection conn = DatabaseConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
+        String sqlUpdate = "UPDATE books SET title = ?, author = ?, category = ?, stock = ? WHERE id = ?";
 
+        try (Connection conn = DatabaseConnection.connect()) {
             for (Book book : bookList) {
-                pstmt.setString(1, book.getTitle());
-                pstmt.setString(2, book.getAuthor());
-                pstmt.setString(3, book.getCategory());
-                pstmt.setInt(4, book.getStock());
-                pstmt.addBatch();
+                if (book.getBookId() == null || book.getBookId().isEmpty()) {
+                    // INSERT new book
+                    try (PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
+                        pstmt.setString(1, book.getTitle());
+                        pstmt.setString(2, book.getAuthor());
+                        pstmt.setString(3, book.getCategory());
+                        pstmt.setInt(4, book.getStock());
+
+                        try (ResultSet rs = pstmt.executeQuery()) {
+                            if (rs.next()) {
+                                String generatedId = String.valueOf(rs.getInt("id"));
+                                book.setBookId(generatedId); // Assign new ID back to the book
+                            }
+                        }
+                    }
+                } else {
+                    // UPDATE existing book
+                    try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdate)) {
+                        pstmt.setString(1, book.getTitle());
+                        pstmt.setString(2, book.getAuthor());
+                        pstmt.setString(3, book.getCategory());
+                        pstmt.setInt(4, book.getStock());
+                        pstmt.setInt(5, Integer.parseInt(book.getBookId()));
+                        pstmt.executeUpdate();
+                    }
+                }
             }
 
-            pstmt.executeBatch();
             System.out.println("Books saved to database.");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public static void updateBook(Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, category = ?, stock = ? WHERE id = ?";
