@@ -180,7 +180,7 @@ public class BookManager extends Application {
     private void deleteSelectedBook() {
         PropertyBook selected = tableView.getSelectionModel().getSelectedItem();
         if (selected != null) {
-            //haspu dari file
+            //hapus dari file
             BookUtil.deleteBook(selected.getId());
             //hapus dari tabel view
             tableView.getItems().remove(selected);
