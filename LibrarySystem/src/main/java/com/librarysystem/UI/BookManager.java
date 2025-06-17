@@ -2,7 +2,6 @@ package com.librarysystem.UI;
 
 import com.librarysystem.model.Book;
 import com.librarysystem.service.BookUtil;
-import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -10,20 +9,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.util.converter.IntegerStringConverter;
 
 import java.util.ArrayList;
 
-public class BookManager extends Application {
+public class BookManager {
     private TableView<PropertyBook> tableView;
     private ObservableList<PropertyBook> data;
 
-    @Override
-    public void start(Stage stage) {
+    public Scene createScene() {
         // Root with background
         BorderPane root = new BorderPane();
         BackgroundImage bgImage = new BackgroundImage(
@@ -51,19 +47,17 @@ public class BookManager extends Application {
         // ───── CONTROL PANEL (LEFT) ─────
         VBox leftPanel = new VBox(20);
         leftPanel.setPadding(new Insets(30));
-        leftPanel.setAlignment(Pos.CENTER); // semua komponen di tengah
+        leftPanel.setAlignment(Pos.CENTER);
         leftPanel.setPrefWidth(300);
         leftPanel.setMaxHeight(380);
         leftPanel.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
 
-        // Search
         TextField searchField = createStyledTextField("Nama Buku/ID Buku");
         searchField.setPrefWidth(200);
         Button searchBtn = createStyledButton("Cari", "#FFA500");
         searchBtn.setPrefWidth(200);
         searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
 
-        // Tombol Tambah & Hapus
         Button addBtn = createStyledButton("TAMBAH BUKU", "#FFA500");
         addBtn.setPrefWidth(200);
         addBtn.setOnAction(e -> openAddBookWindow());
@@ -74,10 +68,9 @@ public class BookManager extends Application {
 
         leftPanel.getChildren().addAll(searchField, searchBtn, addBtn, delBtn);
 
-        // Bungkus leftPanel agar center vertikal
         StackPane leftWrapper = new StackPane(leftPanel);
-        leftWrapper.setPrefWidth(320); // biar tidak terlalu rapat ke kiri
-        leftWrapper.setPadding(new Insets(0, 20, 0, 40)); // kanan, kiri padding
+        leftWrapper.setPrefWidth(320);
+        leftWrapper.setPadding(new Insets(0, 20, 0, 40));
 
         BorderPane mainContent = new BorderPane();
         mainContent.setLeft(leftWrapper);
@@ -86,11 +79,7 @@ public class BookManager extends Application {
 
         root.setCenter(mainContent);
 
-        // ───── SCENE ─────
-        Scene scene = new Scene(root, 1280, 800);
-        stage.setTitle("UMM Library - Book Manager(ADMIN)");
-        stage.setScene(scene);
-        stage.show();
+        return new Scene(root, 1280, 800);
     }
 
     private void openAddBookWindow() {
@@ -148,7 +137,6 @@ public class BookManager extends Application {
         popup.show();
     }
 
-
     private void createTableColumns() {
         TableColumn<PropertyBook, String> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -165,7 +153,6 @@ public class BookManager extends Application {
         TableColumn<PropertyBook, Integer> stockCol = new TableColumn<>("STOK");
         stockCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
-        //ukuran kolom
         idCol.setPrefWidth(60);
         titleCol.setPrefWidth(250);
         authorCol.setPrefWidth(200);
@@ -213,12 +200,12 @@ public class BookManager extends Application {
         TextField tf = new TextField();
         tf.setPromptText(prompt);
         tf.setStyle(
-                "-fx-background-color: #f9f9f9;" +       // Warna latar belakang terang
-                        "-fx-border-color: #cccccc;" +           // Garis tepi abu muda
-                        "-fx-border-width: 1.5;" +               // Lebar garis
-                        "-fx-border-radius: 6;" +                // Membuat agak bulat
-                        "-fx-background-radius: 6;" +            // Bulat untuk latar juga
-                        "-fx-padding: 8 12;"                     // Padding dalam field
+                "-fx-background-color: #f9f9f9;" +
+                        "-fx-border-color: #cccccc;" +
+                        "-fx-border-width: 1.5;" +
+                        "-fx-border-radius: 6;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-padding: 8 12;"
         );
         return tf;
     }

@@ -7,6 +7,7 @@ module com.librarysystem {
     requires org.kordamp.bootstrapfx.core;
     requires java.desktop;
     requires java.logging;
+    requires javafx.fxml;
 
     opens com.librarysystem to javafx.fxml;
     exports com.librarysystem;
