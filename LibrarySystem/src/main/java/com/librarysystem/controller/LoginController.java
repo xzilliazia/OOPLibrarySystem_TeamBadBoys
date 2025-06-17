@@ -1,59 +1,98 @@
 package com.librarysystem.controller;
 
+import com.librarysystem.UI.BookManager;
 import com.librarysystem.util.DatabaseConnection;
-import java.sql.ResultSet;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.stage.Stage;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-
-
+import java.sql.ResultSet;
 
 public class LoginController {
 
     public enum Role {
-        MAHASISWA, ADMIN, INVALID
+        ADMIN, MAHASISWA, INVALID
     }
 
-    public Role login(String usernameOrNim, String password){
-        if(isAdmin(usernameOrNim, password)){
-            return Role.ADMIN;
-        } else if (isMahasiswa(usernameOrNim, password)) {
-            return Role.MAHASISWA;
-        } else {
-            return Role.INVALID;
+    public void login(String username, String password, Stage currentStage) {
+        Role role = authenticate(username, password);
+
+        switch (role) {
+            case ADMIN:
+                loadAdminDashboard(currentStage);  // CALL YOUR JAVA CLASS DASHBOARD
+                break;
+            case MAHASISWA:
+                loadStudentDashboard(currentStage);  // CALL FXML IF NEEDED
+                break;
+            case INVALID:
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Login Gagal");
+                alert.setHeaderText(null);
+                alert.setContentText("Username atau password salah!");
+                alert.showAndWait();
+                break;
         }
     }
 
-    private boolean isAdmin(String username, String password){
-        String query = "SELECT * FROM admin WHERE username=? AND password=?";
-        try(Connection conn = DatabaseConnection.connect();
-            PreparedStatement stmt = conn.prepareStatement(query))
-        {
+    private Role authenticate(String username, String password) {
+        String query = "SELECT role FROM users WHERE username = ? AND password = ?";
+
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
             stmt.setString(1, username);
             stmt.setString(2, password);
 
-            try (ResultSet rs = stmt.executeQuery()){
-                return rs.next();
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String roleStr = rs.getString("role");
+                    if ("admin".equalsIgnoreCase(roleStr)) {
+                        return Role.ADMIN;
+                    } else if ("student".equalsIgnoreCase(roleStr)) {
+                        return Role.MAHASISWA;
+                    }
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+        }
+
+        return Role.INVALID;
+    }
+
+    private void loadAdminDashboard(Stage currentStage) {
+        try {
+            BookManager manager = new BookManager();
+            Scene scene = manager.createScene();
+
+            Stage stage = new Stage();
+            stage.setTitle("Admin Dashboard");
+            stage.setScene(scene);
+            stage.show();
+
+            currentStage.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private boolean isMahasiswa(String nim, String password){
-        String query = "SELECT * FROM mahasiswa WHERE nim = ? AND password = ?";
-        try(Connection conn = DatabaseConnection.connect();
-            PreparedStatement stmt = conn.prepareStatement(query))
-        {
-            stmt.setString(1, nim);
-            stmt.setString(2, password);
+    private void loadStudentDashboard(Stage currentStage) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/librarysystem/view/student_dashboard.fxml"));
+            Parent root = loader.load();
 
-            try (ResultSet rs = stmt.executeQuery()){
-                return rs.next();
-            }
+            Stage stage = new Stage();
+            stage.setTitle("Student Dashboard");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+            currentStage.close();
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 }

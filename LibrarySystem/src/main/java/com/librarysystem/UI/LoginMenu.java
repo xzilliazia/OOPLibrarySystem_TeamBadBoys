@@ -104,21 +104,14 @@ public class LoginMenu {
         loginButton.setOnAction(e -> {
             String user = usernameField.getText().trim();
             String pass = passwordField.getText().trim();
+
             if (user.isEmpty() || pass.isEmpty()) {
                 errorLabel.setText("Mohon isi semua kolom.");
                 errorLabel.setVisible(true);
                 return;
             }
-            LoginController.Role role = new LoginController().login(user, pass);
-            if (role == LoginController.Role.INVALID) {
-                errorLabel.setText("Username atau password salah");
-                errorLabel.setVisible(true);
-                passwordField.clear();
-            } else {
-                errorLabel.setVisible(false);
-                showAlert("Login berhasil", "Selamat datang " + role.name().toLowerCase());
-                // TODO: Navigasi ke dashboard
-            }
+
+            new LoginController().login(user, pass, stage);
         });
 
         registerButton.setOnAction(e -> showAlert("Menu register", "Silahkan isi data mahasiswa"));
