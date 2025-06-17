@@ -13,6 +13,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class LoginMenu {
+
     //main stage
     public void show(Stage stage) {
         Pane root = createRootPane();
@@ -45,11 +46,33 @@ public class LoginMenu {
 
         Label welcomeLabel = new Label("WELCOME TO\nUMM LIBRARY");
         welcomeLabel.setFont(Font.font("Tahoma", 45));
+
+
+    public void show(Stage stage) {
+        //backgroung
+        Image backgroundImg = new Image(getClass().getResource("/img/background.jpg").toExternalForm());
+        BackgroundImage background = new BackgroundImage(backgroundImg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
+                BackgroundPosition.CENTER, new BackgroundSize(1280, 800, false, false,false, false));
+
+        //Root Pane
+        Pane root = new Pane();
+        root.setPrefSize(1280, 800);//ukuran windows keseluruhan
+        root.setBackground(new Background(background));
+
+        ImageView logo = new ImageView(new Image(getClass().getResource("/img/ummlogo.png").toExternalForm()));
+        logo.setFitWidth(245.05);   //lebar logo
+        logo.setFitHeight(241.64);  //tinggi logo
+        logo.setPreserveRatio(true);
+
+        Label welcomeLabel = new Label("WELCOME TO\nUMM LIBRARY");
+        welcomeLabel.setFont(Font.font("Lilita One", 45));
+ 
         welcomeLabel.setTextFill(Color.WHITE);
         welcomeLabel.setTextAlignment(TextAlignment.CENTER);
         welcomeLabel.setWrapText(true);
         welcomeLabel.setMaxWidth(300);
         welcomeLabel.setAlignment(Pos.CENTER);
+
 
         VBox content = new VBox(20, logo, welcomeLabel);
         content.setAlignment(Pos.TOP_CENTER);
@@ -68,6 +91,23 @@ public class LoginMenu {
         Pane formBox = new Pane();
         formBox.setLayoutX(700);
         formBox.setLayoutY(150);
+
+        VBox leftContent = new VBox(20, logo, welcomeLabel);
+        leftContent.setAlignment(Pos.TOP_CENTER);
+        leftContent.setPadding(new Insets(200, 0, 0, 0)); //jarak dari atas
+
+        StackPane leftPane = new StackPane(leftContent);
+        leftPane.setPadding(new Insets(0, 0, 0, 100)); // Jarak kiri 100px agar tidak mepet
+        leftPane.setPrefWidth(600); // Lebar total area kiri
+        leftPane.setAlignment(Pos.TOP_LEFT);
+
+
+        //Form box component
+        //container
+        Pane formBox = new Pane();
+        formBox.setLayoutX(700); // Jarak dari kiri root
+        formBox.setLayoutY(150); // Jarak dari atas root
+
         formBox.setPrefSize(533, 499.38);
         formBox.setStyle("-fx-background-color: rgba(255,255,255,0.75); -fx-background-radius: 20;");
 
@@ -76,6 +116,7 @@ public class LoginMenu {
         titleLabel.setTextFill(Color.BLACK);
         titleLabel.setLayoutX(66.5);
         titleLabel.setLayoutY(30);
+
         titleLabel.setPrefSize(400, 49.94);
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
@@ -120,10 +161,75 @@ public class LoginMenu {
                     errorLabel.setVisible(false);
                     showAlert("Login berhasil", "Selamat datang " + role.name().toLowerCase());
                 }
+
+        titleLabel.setPrefSize(400, 49.94); //posisi tengan label
+        titleLabel.setAlignment(Pos.CENTER);
+        titleLabel.setTextAlignment(TextAlignment.CENTER);
+        titleLabel.setStyle("-fx-alignment: CENTER;");
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Masukkan Username");
+        usernameField.setLayoutX(50);
+        usernameField.setLayoutY(140);
+        usernameField.setPrefSize(421, 53.93);; //tinggi field
+
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Masukkan Password/ID");
+        passwordField.setLayoutX(50);
+        passwordField.setLayoutY(210);
+        passwordField.setPrefSize(421, 53.93);
+
+        Label errorLabel = new Label("Username atau password salah!");
+        errorLabel.setTextFill(Color.RED);
+        errorLabel.setVisible(false); // invincible at start
+        errorLabel.setLayoutX(50);
+        errorLabel.setLayoutY(285);
+
+        Button loginButton = new Button("MASUK");
+        loginButton.setPrefSize(230, 53.93);
+        loginButton.setStyle("-fx-background-color: white; -fx-text-fill: black; -fx-font-weight: bold;");
+
+        Button registerButton = new Button("REGISTER");
+        registerButton.setPrefSize(230, 53.93);
+        registerButton.setStyle("-fx-background-color: yellow; -fx-font-weight: bold;");
+
+        VBox buttonBox = new VBox(10, loginButton, registerButton); // jarak antar tombol 10px
+        buttonBox.setLayoutX(151.5);
+        buttonBox.setLayoutY(320); // posisi dari atas
+        buttonBox.setAlignment(Pos.CENTER);
+
+        formBox.getChildren().addAll(titleLabel, usernameField, passwordField, errorLabel, buttonBox);
+        root.getChildren().addAll(leftPane, formBox);
+
+
+        //Event handler
+        loginButton.setOnAction(e -> {
+            String usernameOrNim = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
+
+            LoginController controller = new LoginController();
+            LoginController.Role role = controller.login(usernameOrNim, password);
+
+            if (usernameOrNim.isEmpty() || password.isEmpty()) {
+                errorLabel.setText("Mohon isi semua kolom.");
+                errorLabel.setVisible(true);
+                return;
+            } else if(role == LoginController.Role.INVALID) {
+                errorLabel.setVisible(true);
+                passwordField.clear();
+            } else {
+                errorLabel.setVisible(false);
+                // TODO: Navigasi ke dashboard sesuai peran
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Login berhasi");
+                alert.setContentText("Selamat datang " + role.name().toLowerCase());
+                alert.showAndWait();
+
             }
         });
 
         registerButton.setOnAction(e -> {
+
             showAlert("Menu register", "Silahkan isi data mahasiswa");
         });
         return formBox;
@@ -158,5 +264,22 @@ public class LoginMenu {
         alert.setHeaderText(header);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+}
+
+            // TODO: Arahkan ke form registeer
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setHeaderText("Menu register");
+            alert.setContentText("Silahkan isi data mahasiswa");
+            alert.showAndWait();
+        });
+
+        //set scene
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setTitle("Umm Library System - Login");
+        stage.show();
+
+
     }
 }

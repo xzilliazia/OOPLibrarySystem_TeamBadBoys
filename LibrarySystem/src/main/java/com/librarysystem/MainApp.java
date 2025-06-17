@@ -14,23 +14,39 @@ import java.util.ArrayList;
 //Admin test function
 //public class MainApp extends Application {
 //    public static void main(String[] args) {
-//        ArrayList<Book> loadedBooks = BookUtil.loadBooks();
+//       ArrayList<Book> loadedBooks = BookUtil.loadBooks();
 //        User.getBookList().addAll(loadedBooks);
 //
 //        launch(args);
-//    }
+//   }
 //
-//    @Override
-//    public void start(Stage stage) throws Exception {
-//        Admin admin = new Admin();
+//   @Override
+//public void start(Stage stage) throws Exception {
+//     Admin admin = new Admin();
 //        admin.menu(stage);
 //    }
 //}
 
+
 //BookManager test function
 public class MainApp{
+=======
+////BookManager test function
+//public class MainApp{
+//    public static void main(String[] args) {
+//        Application.launch(BookManager.class, args);
+//    }
+//}
+
+//Login panel test
+public class MainApp extends Application {
+    @Override
+    public void start(Stage stage) {
+        new LoginMenu().show(stage);
+    }
+
     public static void main(String[] args) {
-        Application.launch(BookManager.class, args);
+        launch(args);
     }
 }
 
