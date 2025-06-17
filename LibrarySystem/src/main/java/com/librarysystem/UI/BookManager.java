@@ -116,9 +116,72 @@ public class BookManager extends Application {
         tableView.setItems(data);
     }
 
+
     private void searchBooks(String keyword) {
         if (keyword == null || keyword.isEmpty()) {
             loadData();
+
+    private void addNewBook() {
+        Dialog<PropertyBook> dialog = new Dialog<>();
+        dialog.setTitle("Add New Book");
+
+        Label lblTitle = new Label("Title: ");
+        TextField tfTitle = new TextField();
+
+        Label lblAuthor = new Label("Author: ");
+        TextField tfAuthor = new TextField();
+
+        Label lblCategory = new Label("Category: ");
+        TextField tfCategory = new TextField();
+
+        Label lblStock = new Label("Stock: ");
+        TextField tfStock = new TextField();
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.add(lblTitle, 0, 1);
+        grid.add(tfTitle, 1, 1);
+        grid.add(lblAuthor, 0, 2);
+        grid.add(tfAuthor, 1, 2);
+        grid.add(lblCategory, 0, 3);
+        grid.add(tfCategory, 1, 3);
+        grid.add(lblStock, 0, 4);
+        grid.add(tfStock, 1, 4);
+
+        dialog.getDialogPane().setContent(grid);
+        ButtonType btnAddType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnAddType, ButtonType.CANCEL);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == btnAddType) {
+                try {
+                    int stock = Integer.parseInt(tfStock.getText());
+                    if (stock < 0) throw new NumberFormatException();
+                    return new PropertyBook("", tfTitle.getText(), tfAuthor.getText(), tfCategory.getText(), stock);
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR, "Stock must be a non-negative integer.");
+                    alert.showAndWait();
+                    return null;
+                }
+            }
+            return null;
+        });
+        dialog.showAndWait().ifPresent(newBook -> {
+            data.add(newBook);
+            saveChanges();
+            tableView.refresh();
+        });
+    }
+
+    private void deleteSelectedBook() {
+        PropertyBook selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected != null) {
+            //hapus dari file
+            BookUtil.deleteBook(selected.getId());
+            //hapus dari tabel view
+            tableView.getItems().remove(selected);
+
         } else {
             ArrayList<Book> found = BookUtil.searchBooksByTitle(keyword);
             ArrayList<PropertyBook> props = PropertyBook.bookToBind(found);
