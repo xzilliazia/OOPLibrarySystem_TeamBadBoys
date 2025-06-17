@@ -74,6 +74,16 @@ public class BookUtil {
         }
     }
 
+    public static Book findBookById(String id) {
+        ArrayList<Book> books = loadBooks();
+        for (Book book : books) {
+            if (book.getBookId().equalsIgnoreCase(id)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
 
     public static void updateBook(Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, category = ?, stock = ? WHERE id = ?";
@@ -85,7 +95,7 @@ public class BookUtil {
             pstmt.setString(2, updatedBook.getAuthor());
             pstmt.setString(3, updatedBook.getCategory());
             pstmt.setInt(4, updatedBook.getStock());
-            pstmt.setString(5, updatedBook.getBookId());
+            pstmt.setLong(5, Long.parseLong(updatedBook.getBookId()));
 
             int rows = pstmt.executeUpdate();
             if (rows > 0) {
