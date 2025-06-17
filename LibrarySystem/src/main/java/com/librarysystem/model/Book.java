@@ -17,6 +17,11 @@ public class Book {
     public String getTitle() {
         return title;
     }
+
+    public void setBookId(String bookId) {
+        this.bookId = bookId;
+    }
+
     public String getAuthor() {
         return author;
     }
