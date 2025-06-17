@@ -173,11 +173,23 @@ public class BookManager {
         if (keyword == null || keyword.isEmpty()) {
             loadData();
         } else {
-            ArrayList<Book> found = BookUtil.searchBooksByTitle(keyword);
-            ArrayList<PropertyBook> props = PropertyBook.bookToBind(found);
+            ArrayList<Book> found = BookUtil.loadBooks(); // Load all books first
+
+            ArrayList<Book> filtered = new ArrayList<>();
+            for (Book book : found) {
+                if (book.getBookId().toLowerCase().contains(keyword.toLowerCase())
+                        || book.getTitle().toLowerCase().contains(keyword.toLowerCase())
+                        || book.getAuthor().toLowerCase().contains(keyword.toLowerCase())
+                        || book.getCategory().toLowerCase().contains(keyword.toLowerCase())) {
+                    filtered.add(book);
+                }
+            }
+
+            ArrayList<PropertyBook> props = PropertyBook.bookToBind(filtered);
             tableView.setItems(FXCollections.observableArrayList(props));
         }
     }
+
 
     private void addBook(String title, String author, String category, String stockText) {
         try {
