@@ -36,16 +36,16 @@ public abstract class User {
         categoryColom.setReorderable(false);
         stokColom.setReorderable(false);
 
-        GridPane grd = new GridPane();
-        grd.setPadding(new Insets(10));
-        grd.setVgap(10);
-        grd.setHgap(10);
-        grd.setAlignment(Pos.CENTER);
-
-        final VBox v = new VBox();
-        v.setSpacing(10);
-        v.getChildren().addAll(tableView);
-        grd.add(v, 0, 0);
+//        GridPane grd = new GridPane();
+//        grd.setPadding(new Insets(10));
+//        grd.setVgap(10);
+//        grd.setHgap(10);
+//        grd.setAlignment(Pos.CENTER);
+//
+//        final VBox v = new VBox();
+//        v.setSpacing(10);
+//        v.getChildren().addAll(tableView);
+//        grd.add(v, 0, 0);
 
         final ObservableList<PropertyBook> observableList = FXCollections.observableArrayList(ary);
         tableView.setItems(observableList);
