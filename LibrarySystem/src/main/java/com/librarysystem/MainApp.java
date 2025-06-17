@@ -30,23 +30,23 @@ import java.util.ArrayList;
 
 //BookManager test function
 ////BookManager test function
-//public class MainApp{
-//    public static void main(String[] args) {
-//        Application.launch(BookManager.class, args);
-//    }
-//}
-
-//Login panel test
-public class MainApp extends Application {
-    @Override
-    public void start(Stage stage) {
-        new LoginMenu().show(stage);
-    }
-
+public class MainApp{
     public static void main(String[] args) {
-        launch(args);
+        Application.launch(BookManager.class, args);
     }
 }
+
+//Login panel test
+//public class MainApp extends Application {
+//    @Override
+//    public void start(Stage stage) {
+//        new LoginMenu().show(stage);
+//    }
+//
+//    public static void main(String[] args) {
+//        launch(args);
+//    }
+//}
 
 //Login panel test
 //public class MainApp extends Application {

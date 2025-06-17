@@ -6,8 +6,10 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
@@ -32,81 +34,145 @@ public class BookManager extends Application {
         );
         root.setBackground(new Background(bgImage));
 
-        // LEFT PANEL
-        VBox leftPanel = createControlPanel();
-        leftPanel.setPrefWidth(400);
-        root.setLeft(leftPanel);
-
-        // TABLEVIEW
+        // ───── TABLE ─────
         tableView = new TableView<>();
-        tableView.setEditable(true);
-        tableView.setStyle("-fx-background-color: rgba(0,0,0,0.7); -fx-text-fill: white;");
+        tableView.setEditable(false);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setStyle("-fx-background-color: rgba(255,255,255,0.85);");
+
         createTableColumns();
         loadData();
 
         VBox tableBox = new VBox(tableView);
-        tableBox.setPadding(new Insets(20));
+        tableBox.setAlignment(Pos.CENTER);
+        tableBox.setPadding(new Insets(30));
         root.setCenter(tableBox);
 
-        // SCENE
+        // ───── CONTROL PANEL (LEFT) ─────
+        VBox leftPanel = new VBox(20);
+        leftPanel.setPadding(new Insets(30));
+        leftPanel.setAlignment(Pos.CENTER); // semua komponen di tengah
+        leftPanel.setPrefWidth(300);
+        leftPanel.setMaxHeight(380);
+        leftPanel.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
+
+        // Search
+        TextField searchField = createStyledTextField("Nama Buku/ID Buku");
+        searchField.setPrefWidth(200);
+        Button searchBtn = createStyledButton("Cari", "#FFA500");
+        searchBtn.setPrefWidth(200);
+        searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
+
+        // Tombol Tambah & Hapus
+        Button addBtn = createStyledButton("TAMBAH BUKU", "#FFA500");
+        addBtn.setPrefWidth(200);
+        addBtn.setOnAction(e -> openAddBookWindow());
+
+        Button delBtn = createStyledButton("HAPUS BUKU", "#FFA500");
+        delBtn.setPrefWidth(200);
+        delBtn.setOnAction(e -> openDeleteBookWindow());
+
+        leftPanel.getChildren().addAll(searchField, searchBtn, addBtn, delBtn);
+
+        // Bungkus leftPanel agar center vertikal
+        StackPane leftWrapper = new StackPane(leftPanel);
+        leftWrapper.setPrefWidth(320); // biar tidak terlalu rapat ke kiri
+        leftWrapper.setPadding(new Insets(0, 20, 0, 40)); // kanan, kiri padding
+
+        BorderPane mainContent = new BorderPane();
+        mainContent.setLeft(leftWrapper);
+        mainContent.setCenter(tableBox);
+        mainContent.setPadding(new Insets(30));
+
+        root.setCenter(mainContent);
+
+        // ───── SCENE ─────
         Scene scene = new Scene(root, 1280, 800);
         stage.setTitle("UMM Library - Book Manager(ADMIN)");
         stage.setScene(scene);
         stage.show();
     }
 
-    private VBox createControlPanel() {
-        VBox panel = new VBox(15);
-        panel.setPadding(new Insets(30));
-        panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 20;");
+    private void openAddBookWindow() {
+        Stage popup = new Stage();
+        popup.setTitle("Tambah Buku");
 
-        TextField searchField = createStyledTextField("Nama Buku/ID Buku");
-        Button searchBtn = createStyledButton("cari", "orange");
-        searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
 
-        Label lblAdd = new Label("TAMBAH BUKU");
         TextField title = createStyledTextField("Nama Buku");
         TextField author = createStyledTextField("Author");
         TextField category = createStyledTextField("Kategori");
         TextField stock = createStyledTextField("Stock");
-        Button btnAdd = createStyledButton("tambah", "orange");
-        btnAdd.setOnAction(e -> addBook(title.getText(), author.getText(), category.getText(), stock.getText()));
 
-        Label lblDelete = new Label("HAPUS BUKU");
-        TextField idDelete = createStyledTextField("ID");
-        Button btnDelete = createStyledButton("hapus buku", "orange");
-        btnDelete.setOnAction(e -> deleteBook(idDelete.getText()));
+        HBox categoryStockBox = new HBox(10, category, stock);
 
-        panel.getChildren().addAll(
-                searchField, searchBtn,
-                lblAdd, title, author, category, stock, btnAdd,
-                lblDelete, idDelete, btnDelete
-        );
-        return panel;
+        Button submit = createStyledButton("Tambah", "#FFA500");
+        submit.setOnAction(e -> {
+            addBook(title.getText(), author.getText(), category.getText(), stock.getText());
+            popup.close();
+        });
+
+        form.getChildren().addAll(title, author, categoryStockBox, submit);
+
+        Scene scene = new Scene(form, 350, 250);
+        popup.setScene(scene);
+        popup.initOwner(tableView.getScene().getWindow());
+        popup.show();
     }
 
+    private void openDeleteBookWindow() {
+        Stage popup = new Stage();
+        popup.setTitle("Hapus Buku");
+
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+
+        Label idLabel = new Label("ID/Nama Buku");
+        TextField idDelete = createStyledTextField("");
+        VBox idFieldDeleteGroup = new VBox(5, idLabel, idDelete);
+
+        Button submit = createStyledButton("Hapus", "#FFA500");
+        submit.setOnAction(e -> {
+            deleteBook(idDelete.getText());
+            popup.close();
+        });
+
+        form.getChildren().addAll(idFieldDeleteGroup, submit);
+
+        Scene scene = new Scene(form, 300, 150);
+        popup.setScene(scene);
+        popup.initOwner(tableView.getScene().getWindow());
+        popup.show();
+    }
+
+
     private void createTableColumns() {
-        TableColumn<PropertyBook, String> colId = new TableColumn<>("ID");
-        colId.setCellValueFactory(cell -> cell.getValue().idProperty());
-        colId.setCellFactory(TextFieldTableCell.forTableColumn());
+        TableColumn<PropertyBook, String> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<PropertyBook, String> colTitle = new TableColumn<>("NAMA BUKU");
-        colTitle.setCellValueFactory(cell -> cell.getValue().titleProperty());
-        colTitle.setCellFactory(TextFieldTableCell.forTableColumn());
+        TableColumn<PropertyBook, String> titleCol = new TableColumn<>("NAMA BUKU");
+        titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<PropertyBook, String> colAuthor = new TableColumn<>("AUTHOR");
-        colAuthor.setCellValueFactory(cell -> cell.getValue().authorProperty());
-        colAuthor.setCellFactory(TextFieldTableCell.forTableColumn());
+        TableColumn<PropertyBook, String> authorCol = new TableColumn<>("AUTHOR");
+        authorCol.setCellValueFactory(new PropertyValueFactory<>("author"));
 
-        TableColumn<PropertyBook, String> colCategory = new TableColumn<>("KATEGORI");
-        colCategory.setCellValueFactory(cell -> cell.getValue().categoryProperty());
-        colCategory.setCellFactory(TextFieldTableCell.forTableColumn());
+        TableColumn<PropertyBook, String> categoryCol = new TableColumn<>("KATEGORI");
+        categoryCol.setCellValueFactory(new PropertyValueFactory<>("category"));
 
-        TableColumn<PropertyBook, Integer> colStock = new TableColumn<>("STOK");
-        colStock.setCellValueFactory(cell -> cell.getValue().stockProperty().asObject());
-        colStock.setCellFactory(TextFieldTableCell.forTableColumn(new IntegerStringConverter()));
+        TableColumn<PropertyBook, Integer> stockCol = new TableColumn<>("STOK");
+        stockCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
-        tableView.getColumns().addAll(colId, colTitle, colAuthor, colCategory, colStock);
+        //ukuran kolom
+        idCol.setPrefWidth(60);
+        titleCol.setPrefWidth(250);
+        authorCol.setPrefWidth(200);
+        categoryCol.setPrefWidth(180);
+        stockCol.setPrefWidth(100);
+
+        tableView.getColumns().addAll(idCol, titleCol, authorCol, categoryCol, stockCol);
     }
 
     private void loadData() {
@@ -146,14 +212,23 @@ public class BookManager extends Application {
     private TextField createStyledTextField(String prompt) {
         TextField tf = new TextField();
         tf.setPromptText(prompt);
-        tf.setStyle("-fx-background-radius: 20; -fx-border-radius: 20; -fx-padding: 10; -fx-background-color: white;");
+        tf.setStyle(
+                "-fx-background-color: #f9f9f9;" +       // Warna latar belakang terang
+                        "-fx-border-color: #cccccc;" +           // Garis tepi abu muda
+                        "-fx-border-width: 1.5;" +               // Lebar garis
+                        "-fx-border-radius: 6;" +                // Membuat agak bulat
+                        "-fx-background-radius: 6;" +            // Bulat untuk latar juga
+                        "-fx-padding: 8 12;"                     // Padding dalam field
+        );
         return tf;
     }
 
     private Button createStyledButton(String text, String color) {
         Button btn = new Button(text);
-        btn.setStyle("-fx-font-weight: bold; -fx-background-radius: 20; -fx-border-radius: 20; " +
-                "-fx-border-color: " + color + "; -fx-padding: 10; -fx-background-color: " + color + ";");
+        btn.setStyle("-fx-font-weight: bold; " +
+                "-fx-background-radius: 20; -fx-border-radius: 20; " +
+                "-fx-border-color: " + color + "; -fx-padding: 10 20 10 20; " +
+                "-fx-background-color: " + color + "; -fx-text-fill: white;");
         return btn;
     }
 
