@@ -62,11 +62,15 @@ public class BookManager {
         addBtn.setPrefWidth(200);
         addBtn.setOnAction(e -> openAddBookWindow());
 
+        Button editBtn = createStyledButton("EDIT BUKU", "#FFA500");
+        editBtn.setPrefWidth(200);
+        editBtn.setOnAction(e -> openEditBookWindow());
+
         Button delBtn = createStyledButton("HAPUS BUKU", "#FFA500");
         delBtn.setPrefWidth(200);
         delBtn.setOnAction(e -> openDeleteBookWindow());
 
-        leftPanel.getChildren().addAll(searchField, searchBtn, addBtn, delBtn);
+        leftPanel.getChildren().addAll(searchField, searchBtn, addBtn,editBtn, delBtn);
 
         StackPane leftWrapper = new StackPane(leftPanel);
         leftWrapper.setPrefWidth(320);
@@ -110,6 +114,63 @@ public class BookManager {
         popup.initOwner(tableView.getScene().getWindow());
         popup.show();
     }
+
+    private void openEditBookWindow() {
+        TextInputDialog idDialog = new TextInputDialog();
+        idDialog.setTitle("Edit Buku");
+        idDialog.setHeaderText("Masukkan ID Buku yang akan diedit:");
+        idDialog.setContentText("ID Buku:");
+
+        idDialog.showAndWait().ifPresent(idInput -> {
+            Book bookToEdit = BookUtil.findBookById(idInput.trim());
+
+            if (bookToEdit == null) {
+                showAlert("Buku tidak ditemukan", "ID buku " + idInput + " tidak ditemukan di database.");
+                return;
+            }
+
+            // Show form with pre-filled values
+            Stage popup = new Stage();
+            popup.setTitle("Edit Buku");
+
+            VBox form = new VBox(10);
+            form.setPadding(new Insets(20));
+            form.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+
+            TextField titleField = createStyledTextField(bookToEdit.getTitle());
+            TextField authorField = createStyledTextField(bookToEdit.getAuthor());
+            TextField categoryField = createStyledTextField(bookToEdit.getCategory());
+            TextField stockField = createStyledTextField(String.valueOf(bookToEdit.getStock()));
+
+            HBox catStockBox = new HBox(10, categoryField, stockField);
+
+            Button submit = createStyledButton("Simpan Perubahan", "#FFA500");
+            submit.setOnAction(e -> {
+                try {
+                    String newTitle = titleField.getText().isEmpty() ? bookToEdit.getTitle() : titleField.getText();
+                    String newAuthor = authorField.getText().isEmpty() ? bookToEdit.getAuthor() : authorField.getText();
+                    String newCategory = categoryField.getText().isEmpty() ? bookToEdit.getCategory() : categoryField.getText();
+                    int newStock = stockField.getText().isEmpty() ? bookToEdit.getStock() : Integer.parseInt(stockField.getText());
+
+                    Book updatedBook = new Book(bookToEdit.getBookId(), newTitle, newAuthor, newCategory, newStock);
+                    BookUtil.updateBook(updatedBook);
+                    loadData();
+                    showAlert("Sukses", "Data buku berhasil diperbarui.");
+                    popup.close();
+                } catch (NumberFormatException ex) {
+                    showAlert("Input salah", "Stock harus berupa angka");
+                }
+            });
+
+            form.getChildren().addAll(titleField, authorField, catStockBox, submit);
+
+            Scene scene = new Scene(form, 400, 300);
+            popup.setScene(scene);
+            popup.initOwner(tableView.getScene().getWindow());
+            popup.show();
+        });
+    }
+
 
     private void openDeleteBookWindow() {
         Stage popup = new Stage();
@@ -202,6 +263,7 @@ public class BookManager {
             showAlert("Input salah", "Stock harus berupa angka");
         }
     }
+
 
     private void deleteBook(String id) {
         BookUtil.deleteBook(id);
