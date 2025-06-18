@@ -1,5 +1,6 @@
 package com.librarysystem.UI;
 
+import com.librarysystem.controller.RegisterController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -80,26 +81,55 @@ public class RegisterMenu {
         titleLabel.setTextAlignment(TextAlignment.CENTER);
 
         TextField usernameField = createTextField("Masukkan Username", 50, 100);
-        TextField idField = createTextField("Masukkan ID", 50, 170);
+        TextField passwordField = createTextField("Masukkan Password", 50, 170);
         TextField prodiField = createTextField("Prodi", 50, 240);
 
         Button registerButton = createButton("REGISTER", 230, 53.93, "yellow", "yellow");
         registerButton.setLayoutX(151.5);
         registerButton.setLayoutY(320);
-
-        formBox.getChildren().addAll(titleLabel, usernameField, idField, prodiField, registerButton);
-
         registerButton.setOnAction(e -> {
-            if (usernameField.getText().isEmpty() || idField.getText().isEmpty() || prodiField.getText().isEmpty()) {
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
+            String prodi = prodiField.getText().trim();
+
+            if (username.isEmpty() || password.isEmpty() || prodi.isEmpty()) {
                 showAlert("Data Tidak Lengkap", "Mohon isi semua kolom.");
                 return;
             }
 
-            // Simpan data ke database atau file di sini
+            boolean success = new RegisterController().registerStudent(username,password, prodi);
 
-            // Tampilkan popup berhasil
-            showSuccessPopup();
+            if (success) {
+                showSuccessPopup();
+                new LoginMenu().show(stage);  // Go back to login
+            } else {
+                showAlert("Gagal", "Terjadi kesalahan saat menyimpan data.");
+            }
         });
+
+
+        formBox.getChildren().addAll(titleLabel, usernameField, passwordField, prodiField, registerButton);
+
+        registerButton.setOnAction(e -> {
+            String username = usernameField.getText().trim();
+            String password = passwordField.getText().trim();
+            String major = prodiField.getText().trim();
+
+            if (username.isEmpty() || password.isEmpty() || major.isEmpty()) {
+                showAlert("Data Tidak Lengkap", "Mohon isi semua kolom.");
+                return;
+            }
+
+            boolean success = new RegisterController().registerStudent(username, password, major);
+
+            if (success) {
+                showSuccessPopup();
+                new LoginMenu().show(stage);  // Go back to login after success
+            } else {
+                showAlert("Gagal", "Terjadi kesalahan saat menyimpan data.");
+            }
+        });
+
 
         return formBox;
     }
