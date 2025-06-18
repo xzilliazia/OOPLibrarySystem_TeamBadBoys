@@ -105,7 +105,11 @@ public class StdDashboard extends Application {
         TableColumn<BorrowRecord, String> colDate = new TableColumn<>("Tanggal Pinjam");
         colDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
 
-        tableView.getColumns().addAll(colNumber, colTitle, colDate);
+        TableColumn<BorrowRecord, String> colStatus = new TableColumn<>("Status");
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        
+
+        tableView.getColumns().addAll(colNumber, colTitle, colDate, colStatus);
 
         VBox tableBox = new VBox();
         tableBox.setAlignment(Pos.CENTER);

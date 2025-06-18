@@ -2,6 +2,7 @@ package com.librarysystem.service;
 
 import com.librarysystem.model.Book;
 import com.librarysystem.model.BorrowRecord;
+import com.librarysystem.model.BorrowStatus;
 import com.librarysystem.util.DatabaseConnection;
 
 import java.sql.*;
@@ -38,7 +39,7 @@ public class BookUtil {
      */
     public static List<BorrowRecord> getBorrowsForUser(int userId) {
         List<BorrowRecord> list = new ArrayList<>();
-        String sql = "SELECT b.title, br.borrow_date FROM borrowed_books br " +
+        String sql = "SELECT b.title, br.borrow_date, br.status FROM borrowed_books br " +
                 "JOIN books b ON br.book_id = b.id " +
                 "WHERE br.user_id = ?";
 
@@ -51,7 +52,8 @@ public class BookUtil {
             while (rs.next()) {
                 list.add(new BorrowRecord(
                         rs.getString("title"),
-                        rs.getString("borrow_date")
+                        rs.getString("borrow_date"),
+                        rs.getString("status")
                 ));
             }
         } catch (SQLException e) {
@@ -60,14 +62,15 @@ public class BookUtil {
         return list;
     }
 
-    public static void insertBorrowRecord(int userId, int bookId) {
-        String sql = "INSERT INTO borrowed_books (user_id, book_id, borrow_date) VALUES (?, ?, CURRENT_DATE)";
+    public static void insertBorrowRecord(int userId, int bookId, BorrowStatus status) {
+        String sql = "INSERT INTO borrowed_books (user_id, book_id, borrow_date, status) VALUES (?, ?, CURRENT_DATE, ?)";
 
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, userId);
             pstmt.setInt(2, bookId);
+            pstmt.setString(3, status.name());
 
             pstmt.executeUpdate();
 

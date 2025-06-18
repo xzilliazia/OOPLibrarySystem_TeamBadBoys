@@ -19,7 +19,14 @@ public class BookManager {
     private TableView<PropertyBook> tableView;
     private ObservableList<PropertyBook> data;
 
-    public Scene createScene() {
+    public void start(Stage stage) {
+        Scene scene = createScene(stage);
+        stage.setScene(scene);
+        stage.setTitle("Book Manager");
+        stage.show();
+    }
+
+    public Scene createScene(Stage stage) {
         // Root with background
         BorderPane root = new BorderPane();
         BackgroundImage bgImage = new BackgroundImage(
@@ -70,7 +77,16 @@ public class BookManager {
         delBtn.setPrefWidth(200);
         delBtn.setOnAction(e -> openDeleteBookWindow());
 
-        leftPanel.getChildren().addAll(searchField, searchBtn, addBtn,editBtn, delBtn);
+//
+
+        Button backBtn = new Button("←");
+        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: #d82e2e;");
+        backBtn.setOnAction(e -> {
+            stage.close();
+            new AdminDashboard().start(stage);
+        });
+
+        leftPanel.getChildren().addAll(searchField, searchBtn, addBtn,editBtn, delBtn, backBtn);
 
         StackPane leftWrapper = new StackPane(leftPanel);
         leftWrapper.setPrefWidth(320);

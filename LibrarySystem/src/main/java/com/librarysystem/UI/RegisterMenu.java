@@ -107,8 +107,15 @@ public class RegisterMenu {
             }
         });
 
+        Button backBtn = new Button("←");
+        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: #c6a3a3;");
+        backBtn.setOnAction(e -> {
+            stage.close();
+            new LoginMenu().show(stage);
+        });
 
-        formBox.getChildren().addAll(titleLabel, usernameField, passwordField, prodiField, registerButton);
+
+        formBox.getChildren().addAll(titleLabel, usernameField, passwordField, prodiField, registerButton, backBtn);
 
         registerButton.setOnAction(e -> {
             String username = usernameField.getText().trim();
