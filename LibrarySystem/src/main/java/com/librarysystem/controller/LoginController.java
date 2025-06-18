@@ -1,10 +1,13 @@
 package com.librarysystem.controller;
 
 import com.librarysystem.UI.BookManager;
+import com.librarysystem.UI.BorrowDashboard;
+import com.librarysystem.UI.StdDashboard;
+import com.librarysystem.model.Admin;
+import com.librarysystem.model.Student;
+import com.librarysystem.model.User;
 import com.librarysystem.util.DatabaseConnection;
 import com.librarysystem.util.Session;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
@@ -16,35 +19,35 @@ import java.sql.ResultSet;
 public class LoginController {
 
     public enum Role {
-        ADMIN, MAHASISWA, INVALID
+        ADMIN, STUDENT, INVALID
     }
 
     public void login(String username, String password, Stage currentStage) {
-        Role role = authenticate(username, password);
-        if (role != Role.INVALID) {
-            Session.currentUser = username;
-            Session.currentRole = role;
-        }
+        User user = authenticate(username, password);
 
-        switch (role) {
-            case ADMIN:
-                loadAdminDashboard(currentStage);  // CALL YOUR JAVA CLASS DASHBOARD
-                break;
-            case MAHASISWA:
-                loadStudentDashboard(currentStage);  // CALL FXML IF NEEDED
-                break;
-            case INVALID:
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Login Gagal");
-                alert.setHeaderText(null);
-                alert.setContentText("Username atau password salah!");
-                alert.showAndWait();
-                break;
+        if (user != null) {
+            // Set session values
+            Session.currentUser = user;
+            Session.currentRole = Role.valueOf(user.getRole().toUpperCase());
+
+            switch (Session.currentRole) {
+                case ADMIN:
+                    loadAdminDashboard(currentStage);
+                    break;
+                case STUDENT:
+                    loadStudentDashboard(currentStage, user);
+                    break;
+                default:
+                    showLoginError();
+                    break;
+            }
+        } else {
+            showLoginError();
         }
     }
 
-    private Role authenticate(String username, String password) {
-        String query = "SELECT role FROM users WHERE username = ? AND password = ?";
+    private User authenticate(String username, String password) {
+        String query = "SELECT id, username, role FROM users WHERE username = ? AND password = ?";
 
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -54,11 +57,14 @@ public class LoginController {
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
+                    int userId = rs.getInt("id");
+                    String uname = rs.getString("username");
                     String roleStr = rs.getString("role");
+
                     if ("admin".equalsIgnoreCase(roleStr)) {
-                        return Role.ADMIN;
+                        return new Admin(userId, uname);
                     } else if ("student".equalsIgnoreCase(roleStr)) {
-                        return Role.MAHASISWA;
+                        return new Student(userId, uname);
                     }
                 }
             }
@@ -66,8 +72,10 @@ public class LoginController {
             e.printStackTrace();
         }
 
-        return Role.INVALID;
+        return null;
     }
+
+
 
     private void loadAdminDashboard(Stage currentStage) {
         try {
@@ -85,19 +93,24 @@ public class LoginController {
         }
     }
 
-    private void loadStudentDashboard(Stage currentStage) {
+    private void loadStudentDashboard(Stage currentStage, User currentUser) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/librarysystem/view/student_dashboard.fxml"));
-            Parent root = loader.load();
+            StdDashboard dashboard = new StdDashboard();
 
-            Stage stage = new Stage();
-            stage.setTitle("Student Dashboard");
-            stage.setScene(new Scene(root));
-            stage.show();
+            // Start StdDashboard on currentStage
+            dashboard.start(currentStage);
 
-            currentStage.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void showLoginError() {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Login Gagal");
+        alert.setHeaderText(null);
+        alert.setContentText("Username atau password salah!");
+        alert.showAndWait();
     }
 }

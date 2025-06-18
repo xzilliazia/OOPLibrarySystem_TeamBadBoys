@@ -14,6 +14,10 @@ import java.util.ArrayList;
 
 public class Admin extends User {
 
+    public Admin(int userID, String username) {
+        super(userID, username, "ADMIN");
+    }
+
     public void menu(Stage stage) {
         //pencarian buku bt judul
         TextField searchField = new TextField();

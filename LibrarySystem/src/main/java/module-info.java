@@ -14,4 +14,6 @@ module com.librarysystem {
     exports com.librarysystem.controller;
     exports com.librarysystem.UI;
     opens com.librarysystem.controller to javafx.fxml;
+    opens com.librarysystem.model to javafx.base;
+
 }
