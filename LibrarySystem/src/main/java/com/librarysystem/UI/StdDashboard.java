@@ -33,7 +33,8 @@ public class StdDashboard extends Application {
         // Sidebar kiri
         VBox sidebar = new VBox(20);
         sidebar.setPadding(new Insets(30));
-        sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 0 20 20 0;");
+        sidebar.setAlignment(Pos.CENTER);
+        sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 0 0 0 0;");
         sidebar.setPrefWidth(300);
 
         Label userLabel = new Label(Session.currentUser);
@@ -49,7 +50,7 @@ public class StdDashboard extends Application {
 
         Button btnExit = new Button("KELUAR");
         applyFont(btnExit, "14pt", true, "orange", "black");
-        btnExit.setOnAction(e -> stage.close());
+        btnExit.setOnAction(e -> new LoginMenu(). show(stage));
 
         sidebar.getChildren().addAll(userLabel, btnPinjam, btnExit);
         root.setLeft(sidebar);
@@ -79,8 +80,15 @@ public class StdDashboard extends Application {
         );
         tableView.setItems(data);
 
-        VBox tableBox = new VBox(tableView);
+        VBox tableBox = new VBox();
+        tableBox.setAlignment(Pos.CENTER);
         tableBox.setPadding(new Insets(30));
+        tableBox.setFillWidth(true);
+        VBox.setVgrow(tableView, Priority.ALWAYS);
+
+        tableView.setMaxHeight(Double.MAX_VALUE);
+        tableBox.getChildren().addAll(tableView);
+
         root.setCenter(tableBox);
 
         Scene scene = new Scene(root, 1280, 800);
