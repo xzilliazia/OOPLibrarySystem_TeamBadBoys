@@ -1,8 +1,10 @@
 package com.librarysystem.UI;
 
+import com.librarysystem.model.Admin;
 import com.librarysystem.model.BorrowRecord;
 import com.librarysystem.model.BorrowStatus;
 import com.librarysystem.model.User;
+import com.librarysystem.util.DatabaseConnection;
 import com.librarysystem.util.Session;
 import com.librarysystem.service.BookUtil;
 import javafx.collections.FXCollections;
@@ -15,10 +17,13 @@ import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.sql.*;
+
 public class AdminDashboard {
 
     private TableView<BorrowRecord> table;
     private User currentUser;
+    private Stage userStage;
 
     public void start(Stage stage) {
         this.currentUser = Session.currentUser;
@@ -52,7 +57,7 @@ public class AdminDashboard {
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
-        Button btnManageBuku = new Button("Manage User");
+        Button btnManageBuku = new Button("Kelola Buku");
         applyFont(btnManageBuku, "14pt", true, "#4CAF50", "white");
         btnManageBuku.setOnAction(e -> {
             stage.close();
@@ -61,6 +66,74 @@ public class AdminDashboard {
 
         Button btnHapusUser = new Button("Hapus User");
         applyFont(btnHapusUser, "14pt", true, "#f44336", "white");
+        btnHapusUser.setOnAction(e -> {
+            if (userStage != null && userStage.isShowing()) {
+                userStage.toFront();
+                return;
+            }
+
+            TableView<User> userTable = new TableView<>();
+            userTable.setItems(getAllStudents());
+            userTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+            userTable.setStyle("-fx-font-family: 'Segoe UI'; -fx-font-size: 14px;");
+
+            TableColumn<User, Integer> idCol = new TableColumn<>("ID");
+            idCol.setCellValueFactory(new PropertyValueFactory<>("userId"));
+            idCol.setStyle("-fx-alignment: CENTER;");
+
+            TableColumn<User, String> nameCol = new TableColumn<>("Username");
+            nameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
+            nameCol.setStyle("-fx-alignment: CENTER-LEFT;");
+
+            TableColumn<User, Void> actionCol = new TableColumn<>("Aksi");
+            actionCol.setCellFactory(col -> new TableCell<>() {
+                private final Button deleteBtn = new Button("Hapus");
+
+                {
+                    deleteBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 5 15;");
+                    deleteBtn.setOnAction(e2 -> {
+                        User selectedUser = getTableView().getItems().get(getIndex());
+                        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
+                                "Yakin ingin menghapus user ini?", ButtonType.YES, ButtonType.NO);
+                        confirm.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.YES) {
+                                if (deleteUserById(selectedUser.getUserId())) {
+                                    getTableView().getItems().remove(selectedUser);
+                                } else {
+                                    new Alert(Alert.AlertType.ERROR, "Gagal menghapus user.").show();
+                                }
+                            }
+                        });
+                    });
+                }
+
+                @Override
+                protected void updateItem(Void item, boolean empty) {
+                    super.updateItem(item, empty);
+                    setGraphic(empty ? null : deleteBtn);
+                    setAlignment(Pos.CENTER);
+                }
+            });
+            idCol.setPrefWidth(80);
+            nameCol.setPrefWidth(300);
+            actionCol.setPrefWidth(120);
+
+            userTable.getColumns().addAll(idCol, nameCol, actionCol);
+
+            VBox layout = new VBox(20, userTable);
+            layout.setPadding(new Insets(30));
+            layout.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+
+            Scene userScene = new Scene(layout, 600, 400);
+            userStage = new Stage(); // Simpan ke field
+            userStage.setTitle("Kelola User (Student)");
+            userStage.setScene(userScene);
+
+            // Reset field saat ditutup
+            userStage.setOnCloseRequest(evt -> userStage = null);
+
+            userStage.show();
+        });
 
         Button btnExit = new Button("KELUAR");
         applyFont(btnExit, "14pt", true, "orange", "black");
@@ -172,6 +245,40 @@ public class AdminDashboard {
                 }
             }
         };
+    }
+
+    private boolean deleteUserById(int id) {
+        String sql = "DELETE FROM users WHERE id = ? AND role = 'student'";
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+    private ObservableList<User> getAllStudents() {
+        ObservableList<User> students = FXCollections.observableArrayList();
+        String sql = "SELECT id, username, role FROM users WHERE role = 'student'";
+        try (Connection conn = DatabaseConnection.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String username = rs.getString("username");
+                String role = rs.getString("role");
+
+                students.add(new User(id, username, role) {});
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return students;
     }
 
     private void applyFont(Label label, String size, boolean bold) {
