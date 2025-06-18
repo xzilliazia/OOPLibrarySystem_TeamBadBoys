@@ -77,7 +77,6 @@ public class BookManager {
         delBtn.setPrefWidth(200);
         delBtn.setOnAction(e -> openDeleteBookWindow());
 
-//
 
         Button backBtn = new Button("←");
         backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: #d82e2e;");

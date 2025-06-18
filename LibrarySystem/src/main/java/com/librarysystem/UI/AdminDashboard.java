@@ -4,6 +4,7 @@ import com.librarysystem.model.BorrowRecord;
 import com.librarysystem.model.BorrowStatus;
 import com.librarysystem.model.User;
 import com.librarysystem.util.Session;
+import com.librarysystem.service.BookUtil;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.*;
@@ -51,9 +52,9 @@ public class AdminDashboard {
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
-        Button btnTambahBuku = new Button("Tambah Buku");
-        applyFont(btnTambahBuku, "14pt", true, "#4CAF50", "white");
-        btnTambahBuku.setOnAction(e -> {
+        Button btnManageBuku = new Button("Manage User");
+        applyFont(btnManageBuku, "14pt", true, "#4CAF50", "white");
+        btnManageBuku.setOnAction(e -> {
             stage.close();
             new BookManager().start(stage);
         });
@@ -68,7 +69,7 @@ public class AdminDashboard {
             new LoginMenu().show(new Stage());
         });
 
-        sidebar.getChildren().addAll(userLabel, btnTambahBuku, btnHapusUser, btnExit);
+        sidebar.getChildren().addAll(userLabel, btnManageBuku, btnHapusUser, btnExit);
         VBox leftContainer = new VBox(sidebar);
         leftContainer.setAlignment(Pos.CENTER);
         leftContainer.setPadding(new Insets(0, 0, 0, 30));
@@ -77,7 +78,19 @@ public class AdminDashboard {
 
         // ✅ Table setup
         table = new TableView<>();
-        table.setItems(getDummyData());
+        ObservableList<BorrowRecord> allRecords = FXCollections.observableArrayList(BookUtil.getAllBorrowRecords());
+        allRecords.sort((a, b) -> a.getBorrower().compareToIgnoreCase(b.getBorrower()));
+
+        String lastBorrower = "";
+        for (BorrowRecord record : allRecords) {
+            if (record.getBorrower().equals(lastBorrower)) {
+                record.setBorrower("");
+            } else {
+                lastBorrower = record.getBorrower();
+            }
+        }
+        table.setItems(allRecords);
+
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<BorrowRecord, Integer> idCol = new TableColumn<>("ID");
@@ -94,6 +107,7 @@ public class AdminDashboard {
         statusCol.setCellFactory(column -> createStatusCell());
 
         table.getColumns().addAll(idCol, borrowerCol, titleCol, statusCol);
+
 
         VBox tableBox = new VBox(table);
         tableBox.setAlignment(Pos.CENTER);
@@ -124,7 +138,7 @@ public class AdminDashboard {
                             record.setStatus(selectedStatus);
 
                             // TODO: Update database
-                            // BookUtil.updateBorrowStatus(record.getId(), selectedStatus);
+                            BookUtil.updateBorrowStatus(record.getId(), selectedStatus);
 
                         } else {
                             comboBox.setValue(record.getStatus());
@@ -158,15 +172,6 @@ public class AdminDashboard {
                 }
             }
         };
-    }
-
-
-    private ObservableList<BorrowRecord> getDummyData() {
-        return FXCollections.observableArrayList(
-                new BorrowRecord(1, "Andi", "Pemrograman Java", BorrowStatus.PENDING),
-                new BorrowRecord(2, "Budi", "Algoritma Dasar", BorrowStatus.APPROVED),
-                new BorrowRecord(3, "Citra", "Struktur Data", BorrowStatus.REJECTED)
-        );
     }
 
     private void applyFont(Label label, String size, boolean bold) {

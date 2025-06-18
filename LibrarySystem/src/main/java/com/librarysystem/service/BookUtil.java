@@ -62,6 +62,32 @@ public class BookUtil {
         return list;
     }
 
+    public static List<BorrowRecord> getAllBorrowRecords() {
+        List<BorrowRecord> list = new ArrayList<>();
+        String sql = "SELECT br.id, u.username AS borrower, b.title, br.status " +
+                "FROM borrowed_books br " +
+                "JOIN users u ON br.user_id = u.id " +
+                "JOIN books b ON br.book_id = b.id";
+
+        try (Connection conn = DatabaseConnection.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                list.add(new BorrowRecord(
+                        rs.getInt("id"),
+                        rs.getString("borrower"),
+                        rs.getString("title"),
+                        BorrowStatus.valueOf(rs.getString("status"))
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+
     public static void insertBorrowRecord(int userId, int bookId, BorrowStatus status) {
         String sql = "INSERT INTO borrowed_books (user_id, book_id, borrow_date, status) VALUES (?, ?, CURRENT_DATE, ?)";
 
@@ -188,6 +214,27 @@ public class BookUtil {
             e.printStackTrace();
         }
     }
+
+    public static void updateBorrowStatus(int borrowId, BorrowStatus status) {
+        String sql = "UPDATE borrowed_books SET status = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, status.name());
+            pstmt.setInt(2, borrowId);
+
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Borrow status updated in DB for ID: " + borrowId);
+            } else {
+                System.out.println("No borrow record found with ID: " + borrowId);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static ArrayList<Book> searchBooksByTitle(String keyword) {
         ArrayList<Book> result = new ArrayList<>();
