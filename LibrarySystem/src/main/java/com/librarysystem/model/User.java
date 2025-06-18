@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public abstract class User {
     private int userId;
     private String username;
+    private String major;
     private String role;
 
     private static ArrayList<Book> bookList = new ArrayList<>();
@@ -20,6 +21,18 @@ public abstract class User {
     public User(int userId, String username, String role) {
         this.userId = userId;
         this.username = username;
+        this.role = role;
+    }
+
+    public User(String username, String major) {
+        this.username = username;
+        this.major = major;
+    }
+
+    public User(int userId, String username, String major, String role) {
+        this.userId = userId;
+        this.username = username;
+        this.major = major;
         this.role = role;
     }
 
@@ -40,6 +53,10 @@ public abstract class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getMajor() {return major;}
+
+    public void setMajor(String major) {this.major = major;}
 
     // Getter & Setter for role
     public String getRole() {

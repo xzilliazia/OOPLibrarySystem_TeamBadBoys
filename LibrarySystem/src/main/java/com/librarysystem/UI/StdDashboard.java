@@ -1,8 +1,11 @@
 package com.librarysystem.UI;
 
+import com.librarysystem.model.Book;
+import com.librarysystem.model.Student;
 import com.librarysystem.model.User;
 import com.librarysystem.model.BorrowRecord;
 import com.librarysystem.service.BookUtil;
+import com.librarysystem.service.UserUtil;
 import com.librarysystem.util.Session;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -16,11 +19,13 @@ import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StdDashboard extends Application {
     private TableView<BorrowRecord> tableView;
     private ObservableList<BorrowRecord> data;
+    private Label userLabel;
     private User currentUser;
 
     public void setCurrentUser(User user) {
@@ -47,7 +52,7 @@ public class StdDashboard extends Application {
         sidebar.setAlignment(Pos.TOP_CENTER);
         sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
 
-        Label userLabel = new Label(Session.currentUser.getUsername());
+        userLabel = new Label(Session.currentUser.getUsername());
         applyFont(userLabel, "18pt", true);
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
@@ -62,11 +67,15 @@ public class StdDashboard extends Application {
             stage.close();
         });
 
+        Button btnEditProfile = new Button("EDIT PROFILE");
+        applyFont(btnEditProfile, "14pt", true, "orange", "black");
+        btnEditProfile.setOnAction(e -> handleEditProfile());
+
         Button btnExit = new Button("KELUAR");
         applyFont(btnExit, "14pt", true, "orange", "black");
         btnExit.setOnAction(e -> new LoginMenu(). show(stage));
 
-        sidebar.getChildren().addAll(userLabel, btnPinjam, btnExit);
+        sidebar.getChildren().addAll(userLabel, btnPinjam, btnEditProfile, btnExit);
 
         // Wrapping sidebar in a VBox container to enable vertical centering on left region
         VBox leftContainer = new VBox();
@@ -107,7 +116,7 @@ public class StdDashboard extends Application {
 
         TableColumn<BorrowRecord, String> colStatus = new TableColumn<>("Status");
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        
+
 
         tableView.getColumns().addAll(colNumber, colTitle, colDate, colStatus);
 
@@ -146,5 +155,90 @@ public class StdDashboard extends Application {
         String weight = bold ? "bold" : "normal";
         button.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight +
                 "; -fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + "; -fx-background-radius: 20; -fx-padding: 10 30;");
+    }
+
+    private TextField createStyledTextField() {
+        TextField tf = new TextField();
+        tf.setStyle(
+                "-fx-background-color: #f9f9f9;" +
+                        "-fx-border-color: #cccccc;" +
+                        "-fx-border-width: 1.5;" +
+                        "-fx-border-radius: 6;" +
+                        "-fx-background-radius: 6;" +
+                        "-fx-padding: 8 12;"
+        );
+        return tf;
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(title);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private Button createStyledButton(String text, String color) {
+        Button btn = new Button(text);
+        btn.setStyle("-fx-font-weight: bold; " +
+                "-fx-background-radius: 20; -fx-border-radius: 20; " +
+                "-fx-border-color: " + color + "; -fx-padding: 10 20 10 20; " +
+                "-fx-background-color: " + color + "; -fx-text-fill: white;");
+        return btn;
+    }
+
+    private void loadData() {
+        refreshTable();
+    }
+
+    private void handleEditProfile() {
+        User userToEdit = currentUser;
+        Stage popup = new Stage();
+        popup.setTitle("Edit Profile");
+
+        VBox form = new VBox(10);
+        form.setPadding(new Insets(20));
+        form.setStyle("-fx-background-color: white; -fx-background-radius: 10;");
+
+        TextField usernameField = createStyledTextField();
+        usernameField.setText(userToEdit.getUsername());
+
+        TextField majorField = createStyledTextField();
+        majorField.setText(userToEdit.getMajor());
+
+
+        Button submit = createStyledButton("Simpan Perubahan", "#FFA500");
+        submit.setOnAction(e -> {
+            try {
+                String usernameText = usernameField.getText();
+                String majorText = majorField.getText();
+
+                String newUsername = (usernameText == null || usernameText.isEmpty()) ? currentUser.getUsername() : usernameText;
+                String newMajor = (majorText == null || majorText.isEmpty()) ? currentUser.getMajor() : majorText;
+
+                currentUser.setUsername(newUsername);
+                currentUser.setMajor(newMajor);
+
+                UserUtil.updateUser(currentUser);
+
+                refreshTable();  // or whatever your table reload method is
+                userLabel.setText(currentUser.getUsername()); // update label
+
+                showAlert("Sukses", "Data profil berhasil diperbarui.");
+                popup.close();
+            } catch (Exception ex) {
+                showAlert("Error", "Terjadi kesalahan saat memperbarui profil.\n" + ex.getMessage());
+                ex.printStackTrace();
+            }
+        });
+
+        // 🚀 Add fields + button to form!
+        form.getChildren().addAll(new Label("Username:"), usernameField,
+                new Label("Major:"), majorField,
+                submit);
+
+        Scene scene = new Scene(form, 400, 300);
+        popup.setScene(scene);
+        popup.initOwner(tableView.getScene().getWindow());
+        popup.show();
     }
 }
