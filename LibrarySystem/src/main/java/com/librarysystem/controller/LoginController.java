@@ -1,5 +1,6 @@
 package com.librarysystem.controller;
 
+import com.librarysystem.UI.AdminDashboard;
 import com.librarysystem.UI.BookManager;
 import com.librarysystem.UI.BorrowDashboard;
 import com.librarysystem.UI.StdDashboard;
@@ -76,22 +77,16 @@ public class LoginController {
     }
 
 
-
     private void loadAdminDashboard(Stage currentStage) {
         try {
-            BookManager manager = new BookManager();
-            Scene scene = manager.createScene();
-
-            Stage stage = new Stage();
-            stage.setTitle("Admin Dashboard");
-            stage.setScene(scene);
-            stage.show();
-
+            AdminDashboard adminDashboard = new AdminDashboard();
+            adminDashboard.start(new Stage());
             currentStage.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 
     private void loadStudentDashboard(Stage currentStage, User currentUser) {
         try {

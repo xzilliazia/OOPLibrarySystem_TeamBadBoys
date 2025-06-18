@@ -1,11 +1,11 @@
 package com.librarysystem.UI;
 
-import com.librarysystem.model.Admin;
 import com.librarysystem.model.BorrowRecord;
+import com.librarysystem.model.BorrowStatus;
 import com.librarysystem.model.User;
 import com.librarysystem.util.Session;
-import javafx.application.Application;
-import javafx.collections.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,15 +14,21 @@ import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-public class AdminDashboard extends Application {
+public class AdminDashboard {
 
     private TableView<BorrowRecord> table;
     private User currentUser;
 
-    @Override
     public void start(Stage stage) {
         this.currentUser = Session.currentUser;
+        Scene scene = createScene(stage);
 
+        stage.setScene(scene);
+        stage.setTitle("Admin Dashboard");
+        stage.show();
+    }
+
+    public Scene createScene(Stage stage) {
         BorderPane root = new BorderPane();
 
         // ✅ Background image
@@ -40,38 +46,41 @@ public class AdminDashboard extends Application {
         sidebar.setAlignment(Pos.TOP_CENTER);
         sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
 
-        Label userLabel = new Label(currentUser.getUsername()); // tampilkan nama
+        Label userLabel = new Label(currentUser.getUsername());
         applyFont(userLabel, "18pt", true);
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
         Button btnTambahBuku = new Button("Tambah Buku");
         applyFont(btnTambahBuku, "14pt", true, "#4CAF50", "white");
+        btnTambahBuku.setOnAction(e -> {
+            stage.close();
+            new BookManager().start(stage);
+        });
 
         Button btnHapusUser = new Button("Hapus User");
         applyFont(btnHapusUser, "14pt", true, "#f44336", "white");
 
         Button btnExit = new Button("KELUAR");
         applyFont(btnExit, "14pt", true, "orange", "black");
-        btnExit.setOnAction(e -> new LoginMenu().show(stage));
+        btnExit.setOnAction(e -> {
+            stage.close();  // close the current dashboard
+            new LoginMenu().show(new Stage());
+        });
 
         sidebar.getChildren().addAll(userLabel, btnTambahBuku, btnHapusUser, btnExit);
-
-        VBox leftContainer = new VBox();
+        VBox leftContainer = new VBox(sidebar);
         leftContainer.setAlignment(Pos.CENTER);
-        leftContainer.getChildren().add(sidebar);
         leftContainer.setPadding(new Insets(0, 0, 0, 30));
         leftContainer.setPrefWidth(400);
-        VBox.setVgrow(leftContainer, Priority.ALWAYS);
         root.setLeft(leftContainer);
 
-        // ✅ Table
+        // ✅ Table setup
         table = new TableView<>();
         table.setItems(getDummyData());
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<BorrowRecord, Integer> idCol = new TableColumn<>("ID");
-        idCol.setMaxWidth(600);
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         TableColumn<BorrowRecord, String> borrowerCol = new TableColumn<>("Nama Peminjam");
@@ -80,88 +89,96 @@ public class AdminDashboard extends Application {
         TableColumn<BorrowRecord, String> titleCol = new TableColumn<>("Judul Buku");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<BorrowRecord, String> statusCol = new TableColumn<>("Status");
+        TableColumn<BorrowRecord, BorrowStatus> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusCol.setCellFactory(column -> createStatusCell());
 
-        statusCol.setCellFactory(column -> new TableCell<>() {
-            private final ComboBox<String> comboBox = new ComboBox<>(
-                    FXCollections.observableArrayList("Pending", "Dipinjam", "Dikembalikan")
+        table.getColumns().addAll(idCol, borrowerCol, titleCol, statusCol);
+
+        VBox tableBox = new VBox(table);
+        tableBox.setAlignment(Pos.CENTER);
+        tableBox.setPadding(new Insets(30));
+        root.setCenter(tableBox);
+
+        return new Scene(root, 1280, 800);
+    }
+
+    private TableCell<BorrowRecord, BorrowStatus> createStatusCell() {
+        return new TableCell<>() {
+            private final ComboBox<BorrowStatus> comboBox = new ComboBox<>(
+                    FXCollections.observableArrayList(BorrowStatus.values())
             );
             private boolean initialized = false;
 
             {
                 comboBox.setOnAction(e -> {
-                    if (!initialized) return; // lewati jika belum diinisialisasi
+                    if (!initialized) return;
+
                     BorrowRecord record = getTableView().getItems().get(getIndex());
-                    String selectedStatus = comboBox.getValue();
+                    BorrowStatus selectedStatus = comboBox.getValue();
 
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION,
                             "Yakin ingin mengganti status?", ButtonType.YES, ButtonType.NO);
                     alert.showAndWait().ifPresent(response -> {
                         if (response == ButtonType.YES) {
                             record.setStatus(selectedStatus);
-                            // TODO: Update database di sini nanti
+
+                            // TODO: Update database
+                            // BookUtil.updateBorrowStatus(record.getId(), selectedStatus);
+
                         } else {
                             comboBox.setValue(record.getStatus());
                         }
                     });
                 });
+
+                // Display user-friendly text
+                comboBox.setCellFactory(cb -> new ListCell<>() {
+                    @Override
+                    protected void updateItem(BorrowStatus item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setText(empty || item == null ? null : item.getDisplayName());
+                    }
+                });
+                comboBox.setButtonCell(comboBox.getCellFactory().call(null));
             }
 
             @Override
-            protected void updateItem(String status, boolean empty) {
+            protected void updateItem(BorrowStatus status, boolean empty) {
                 super.updateItem(status, empty);
                 if (empty || status == null) {
                     setGraphic(null);
                 } else {
-                    initialized = false; // cegah trigger saat setValue
+                    initialized = false;
                     comboBox.setValue(status);
                     setGraphic(comboBox);
                     setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                     setStyle("-fx-alignment: CENTER;");
-                    initialized = true; // baru aktifkan setelah semua siap
+                    initialized = true;
                 }
             }
-        });
-
-        table.getColumns().addAll(idCol, borrowerCol, titleCol, statusCol);
-
-        VBox tableBox = new VBox();
-        tableBox.setAlignment(Pos.CENTER);
-        tableBox.setPadding(new Insets(30));
-        tableBox.getChildren().add(table);
-        VBox.setVgrow(table, Priority.ALWAYS);
-
-        root.setCenter(tableBox);
-
-        Scene scene = new Scene(root, 1280, 800);
-        stage.setScene(scene);
-        stage.setTitle("Admin Dashboard");
-        stage.show();
+        };
     }
+
 
     private ObservableList<BorrowRecord> getDummyData() {
         return FXCollections.observableArrayList(
-                new BorrowRecord(1, "Andi", "Pemrograman Java", "Pending"),
-                new BorrowRecord(2, "Budi", "Algoritma Dasar", "Dipinjam"),
-                new BorrowRecord(3, "Citra", "Struktur Data", "Dikembalikan")
+                new BorrowRecord(1, "Andi", "Pemrograman Java", BorrowStatus.PENDING),
+                new BorrowRecord(2, "Budi", "Algoritma Dasar", BorrowStatus.APPROVED),
+                new BorrowRecord(3, "Citra", "Struktur Data", BorrowStatus.REJECTED)
         );
     }
 
     private void applyFont(Label label, String size, boolean bold) {
         String weight = bold ? "bold" : "normal";
-        label.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight + "; -fx-text-fill: black;");
+        label.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size +
+                "; -fx-font-weight: " + weight + "; -fx-text-fill: black;");
     }
 
     private void applyFont(Button button, String size, boolean bold, String bgColor, String textColor) {
         String weight = bold ? "bold" : "normal";
-        button.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight +
-                "; -fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + "; -fx-background-radius: 20; -fx-padding: 10 30;");
-    }
-
-    public static void main(String[] args) {
-        // Simulasi login
-        Session.currentUser = new Admin(1,"admin 1");
-        AdminDashboard.launch(args);
+        button.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size +
+                "; -fx-font-weight: " + weight + "; -fx-background-color: " + bgColor +
+                "; -fx-text-fill: " + textColor + "; -fx-background-radius: 20; -fx-padding: 10 30;");
     }
 }

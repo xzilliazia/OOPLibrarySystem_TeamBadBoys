@@ -1,6 +1,7 @@
 package com.librarysystem.UI;
 
 import com.librarysystem.model.Book;
+import com.librarysystem.model.BorrowStatus;
 import com.librarysystem.model.User;
 import com.librarysystem.service.BookUtil;
 import javafx.application.Application;
@@ -226,7 +227,7 @@ public class BorrowDashboard extends Application {
         BookUtil.updateBookStock(selected.getId(), selected.getStock());
 
         // NEW: Insert borrow record!
-        BookUtil.insertBorrowRecord(currentUser.getUserId(), selected.getId());
+        BookUtil.insertBorrowRecord(currentUser.getUserId(), selected.getId(), BorrowStatus.PENDING);
 
         tableView.refresh();
 
