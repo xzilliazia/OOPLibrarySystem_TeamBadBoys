@@ -114,7 +114,7 @@ public class LoginMenu {
             new LoginController().login(user, pass, stage);
         });
 
-        registerButton.setOnAction(e -> showAlert("Menu register", "Silahkan isi data mahasiswa"));
+        registerButton.setOnAction(e -> new RegisterMenu().show(stage));
 
         return formBox;
     }
