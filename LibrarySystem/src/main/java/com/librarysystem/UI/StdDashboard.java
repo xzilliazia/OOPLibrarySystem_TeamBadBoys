@@ -73,7 +73,20 @@ public class StdDashboard extends Application {
 
         Button btnExit = new Button("KELUAR");
         applyFont(btnExit, "14pt", true, "orange", "black");
-        btnExit.setOnAction(e -> new LoginMenu(). show(stage));
+        btnExit.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Konfirmasi Keluar");
+            alert.setHeaderText("Apakah Anda ingin keluar?");
+            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    new LoginMenu().show(stage);
+                }
+                // Jika "NO", tidak melakukan apa-apa (tetap di halaman sekarang)
+            });
+        });
+
 
         sidebar.getChildren().addAll(userLabel, btnPinjam, btnEditProfile, btnExit);
 
