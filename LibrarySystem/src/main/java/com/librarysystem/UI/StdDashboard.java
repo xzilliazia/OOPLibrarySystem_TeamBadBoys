@@ -8,6 +8,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -43,12 +44,13 @@ public class StdDashboard extends Application {
         // Sidebar
         VBox sidebar = new VBox(20);
         sidebar.setPadding(new Insets(30));
-        sidebar.setAlignment(Pos.CENTER);
-        sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 0 0 0 0;");
-        sidebar.setPrefWidth(300);
+        sidebar.setAlignment(Pos.TOP_CENTER);
+        sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
 
         Label userLabel = new Label(Session.currentUser.getUsername());
         applyFont(userLabel, "18pt", true);
+        userLabel.setMaxWidth(Double.MAX_VALUE);
+        userLabel.setAlignment(Pos.CENTER);
 
         Button btnPinjam = new Button("PINJAM");
         applyFont(btnPinjam, "14pt", true, "white", "black");
@@ -65,7 +67,19 @@ public class StdDashboard extends Application {
         btnExit.setOnAction(e -> new LoginMenu(). show(stage));
 
         sidebar.getChildren().addAll(userLabel, btnPinjam, btnExit);
-        root.setLeft(sidebar);
+
+        // Wrapping sidebar in a VBox container to enable vertical centering on left region
+        VBox leftContainer = new VBox();
+        leftContainer.setAlignment(Pos.CENTER); // Vertical and horizontal center
+        leftContainer.getChildren().add(sidebar);
+        leftContainer.setPadding(new Insets(0, 0, 0, 30));
+        leftContainer.setPrefWidth(400);
+        leftContainer.setMaxWidth(400);
+        leftContainer.setMinWidth(400);
+        // Make leftContainer take full height of the scene so sidebar can center vertically within it
+        VBox.setVgrow(leftContainer, Priority.ALWAYS);
+        leftContainer.setPrefHeight(Region.USE_COMPUTED_SIZE);
+        root.setLeft(leftContainer);
 
         // Table
         tableView = new TableView<>();
@@ -95,7 +109,7 @@ public class StdDashboard extends Application {
 
         VBox tableBox = new VBox();
         tableBox.setAlignment(Pos.CENTER);
-        tableBox.setPadding(new Insets(30));
+        tableBox.setPadding(new Insets(30, 30, 30, 30));
         tableBox.setFillWidth(true);
         VBox.setVgrow(tableView, Priority.ALWAYS);
 
