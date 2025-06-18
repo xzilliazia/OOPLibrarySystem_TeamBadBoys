@@ -21,6 +21,11 @@ public class BorrowDashboard extends Application {
 
     private TableView<PropertyBook> tableView;
     private ObservableList<PropertyBook> data;
+    private Stage previousStage;
+
+    public void setPreviousStage(Stage stage) {
+        this.previousStage = stage;
+    }
 
     @Override
     public void start(Stage stage) {
@@ -63,51 +68,52 @@ public class BorrowDashboard extends Application {
     }
 
     private VBox createSearchPanel() {
-            // Panel isi tombol dan input
-            VBox contentBox = new VBox(15);
-            contentBox.setAlignment(Pos.CENTER);
+        // Panel isi tombol dan input
+        VBox contentBox = new VBox(15);
+        contentBox.setAlignment(Pos.CENTER);
 
-            Button backBtn = new Button("←");
-            backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: lightgray;");
-            backBtn.setOnAction(e -> System.out.println("Back clicked"));
+        Button backBtn = new Button("←");
+        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: lightgray;");
+        backBtn.setOnAction(e -> {
+            new StdDashboard().start(previousStage);
+        });
 
-            Label title = new Label("CARI BUKU");
-            title.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold;");
+        Label title = new Label("CARI BUKU");
+        title.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold;");
 
-            TextField searchField = new TextField();
-            searchField.setPromptText("Masukkan nama buku/Author");
-            searchField.setStyle("-fx-background-radius: 25; -fx-padding: 10; -fx-font-size: 12pt;");
+        TextField searchField = new TextField();
+        searchField.setPromptText("Masukkan nama buku/Author");
+        searchField.setStyle("-fx-background-radius: 25; -fx-padding: 10; -fx-font-size: 12pt;");
 
-            Button searchBtn = new Button("cari");
-            searchBtn.setStyle("-fx-background-radius: 25; -fx-background-color: orange; -fx-font-weight: bold; -fx-font-size: 14pt;");
-            searchBtn.setPrefWidth(200);
-            searchBtn.setPrefHeight(40);
-            searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
+        Button searchBtn = new Button("Cari buku");
+        searchBtn.setStyle("-fx-background-radius: 25; -fx-background-color: orange; -fx-font-weight: bold; -fx-font-size: 14pt;");
+        searchBtn.setPrefWidth(200);
+        searchBtn.setPrefHeight(40);
+        searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
 
-            Button pinjamBtn = new Button("pinjam");
-            pinjamBtn.setStyle("-fx-background-radius: 25; -fx-background-color: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
-            pinjamBtn.setPrefWidth(200);
-            pinjamBtn.setPrefHeight(40);
-            pinjamBtn.setOnAction(e -> showAlert("Pinjam Buku", "Fitur pinjam dalam pengembangan."));
+        Button pinjamBtn = new Button("Pinjam");
+        pinjamBtn.setStyle("-fx-background-radius: 25; -fx-background-color: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
+        pinjamBtn.setPrefWidth(200);
+        pinjamBtn.setPrefHeight(40);
+        pinjamBtn.setOnAction(e -> showAlert("Pinjam Buku", "Fitur pinjam dalam pengembangan."));
 
-            contentBox.getChildren().addAll(backBtn, title, searchField, searchBtn, pinjamBtn);
+        contentBox.getChildren().addAll(backBtn, title, searchField, searchBtn, pinjamBtn);
 
-            // Label catatan di bawah
-            Label catatan = new Label("*untuk pengembalian buku langsung ke petugas perpustakaan");
-            catatan.setStyle("-fx-font-size: 10pt;");
-            catatan.setWrapText(true);
+        // Label catatan di bawah
+        Label catatan = new Label("*untuk pengembalian buku langsung ke petugas perpustakaan");
+        catatan.setStyle("-fx-font-size: 10pt;");
+        catatan.setWrapText(true);
 
-            // Bungkus semuanya dalam BorderPane
-            BorderPane panel = new BorderPane();
-            panel.setPadding(new Insets(60));
-            panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 25;");
-            panel.setCenter(contentBox);
-            panel.setBottom(catatan);
-            BorderPane.setMargin(catatan, new Insets(20, 0, 0, 0)); // jarak atas dari catatan
+        // Bungkus semuanya dalam BorderPane
+        BorderPane panel = new BorderPane();
+        panel.setPadding(new Insets(60));
+        panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 25;");
+        panel.setCenter(contentBox);
+        panel.setBottom(catatan);
+        BorderPane.setMargin(catatan, new Insets(20, 0, 0, 0)); // jarak atas dari catatan
 
-            return new VBox(panel);
-        }
-
+        return new VBox(panel);
+    }
 
     private TableView<PropertyBook> createTableView() {
         TableView<PropertyBook> table = new TableView<>();
@@ -168,4 +174,3 @@ public class BorrowDashboard extends Application {
         alert.showAndWait();
     }
 }
-

@@ -72,13 +72,13 @@ import java.util.ArrayList;
 //        launch(args);
 //    }
 //}
-//public class MainApp{
-//    public static void main(String[] args) {
-//        Application.launch(StdDashboard.class, args);
-//    }
-//}
 public class MainApp{
     public static void main(String[] args) {
-        BorrowDashboard.launch(BorrowDashboard.class, args);
+        Application.launch(StdDashboard.class, args);
     }
 }
+//public class MainApp{
+//    public static void main(String[] args) {
+//        BorrowDashboard.launch(BorrowDashboard.class, args);
+//    }
+//}

@@ -2,17 +2,20 @@ package com.librarysystem.UI;
 
 import com.librarysystem.util.Session;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class StdDashboard extends Application {
-    Label name = new Label(Session.currentUser);
+    private TableView<BorrowRecord> tableView;
+    private ObservableList<BorrowRecord> data;
 
     @Override
     public void start(Stage stage) {
@@ -27,35 +30,58 @@ public class StdDashboard extends Application {
         );
         root.setBackground(new Background(bg));
 
-        // Logo
-        ImageView logo = new ImageView(new Image(getClass().getResource("/img/ummlogo.png").toExternalForm()));
-        logo.setFitWidth(200);
-        logo.setPreserveRatio(true);
+        // Sidebar kiri
+        VBox sidebar = new VBox(20);
+        sidebar.setPadding(new Insets(30));
+        sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 0 20 20 0;");
+        sidebar.setPrefWidth(300);
 
-        Label welcome = new Label("WELCOME TO\nUMM LIBRARY");
-        applyFont(welcome, "28pt", true);
-
-        Label name = new Label(Session.currentUser);
-        name.setStyle("-fx-font-size: 16pt; -fx-text-fill: white;");
+        Label userLabel = new Label(Session.currentUser);
+        applyFont(userLabel, "18pt", true);
 
         Button btnPinjam = new Button("PINJAM");
-        applyFont(btnPinjam, "30pt", true, "white");
-        btnPinjam.setOnAction(e -> showBorrowMenu(stage));
+        applyFont(btnPinjam, "14pt", true, "white", "black");
+        btnPinjam.setOnAction(e -> {
+            BorrowDashboard borrow = new BorrowDashboard();
+            borrow.setPreviousStage(stage);
+            borrow.start(stage);
+        });
 
         Button btnExit = new Button("KELUAR");
-        btnExit.setStyle("-fx-background-color: yellow");
-        applyFont(btnExit, "30pt", true, "yellow");
+        applyFont(btnExit, "14pt", true, "orange", "black");
         btnExit.setOnAction(e -> stage.close());
 
-        VBox centerBox = new VBox(20, logo, welcome, name, btnPinjam, btnExit);
-        centerBox.setAlignment(Pos.CENTER);
-        centerBox.setPadding(new Insets(100));
-        centerBox.setStyle("-fx-background-color: rgba(255,255,255,0.15); -fx-background-radius: 20;");
+        sidebar.getChildren().addAll(userLabel, btnPinjam, btnExit);
+        root.setLeft(sidebar);
 
-        StackPane centerPane = new StackPane(centerBox);
-        centerPane.setAlignment(Pos.CENTER);
+        // Konten kanan (table riwayat)
+        tableView = new TableView<>();
+        tableView.setStyle("-fx-background-color: rgba(0,0,0,0.5); -fx-text-fill: white;");
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        root.setCenter(centerPane);
+        TableColumn<BorrowRecord, String> colId = new TableColumn<>("ID Buku");
+        colId.setCellValueFactory(new PropertyValueFactory<>("bookId"));
+
+        TableColumn<BorrowRecord, String> colTitle = new TableColumn<>("Judul");
+        colTitle.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+        TableColumn<BorrowRecord, String> colDate = new TableColumn<>("Tanggal Pinjam");
+        colDate.setCellValueFactory(new PropertyValueFactory<>("borrowDate"));
+
+        TableColumn<BorrowRecord, String> colStatus = new TableColumn<>("Status");
+        colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        tableView.getColumns().addAll(colId, colTitle, colDate, colStatus);
+
+        data = FXCollections.observableArrayList(
+                new BorrowRecord("B001", "Algoritma Dasar", "2025-06-01", "Dipinjam"),
+                new BorrowRecord("B002", "Pemrograman Java", "2025-06-03", "Dikembalikan")
+        );
+        tableView.setItems(data);
+
+        VBox tableBox = new VBox(tableView);
+        tableBox.setPadding(new Insets(30));
+        root.setCenter(tableBox);
 
         Scene scene = new Scene(root, 1280, 800);
         stage.setScene(scene);
@@ -63,21 +89,33 @@ public class StdDashboard extends Application {
         stage.show();
     }
 
-    private void showBorrowMenu(Stage stage) {
-        // Ganti scene ke menu pinjam (StudentMenu, dll)
-        StdDashboard menu = new StdDashboard();
-        menu.start(stage); // Ganti scene saat ini
-    }
-
     private void applyFont(Label label, String size, boolean bold) {
         String weight = bold ? "bold" : "normal";
-        label.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight + "; -fx-text-fill: white;");
+        label.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight + "; -fx-text-fill: black;");
     }
 
-    private void applyFont(Button button, String size, boolean bold, String color) {
+    private void applyFont(Button button, String size, boolean bold, String bgColor, String textColor) {
         String weight = bold ? "bold" : "normal";
         button.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight +
-                "; -fx-background-color: " + color + "; -fx-background-radius: 20; -fx-padding: 10 30;");
+                "; -fx-background-color: " + bgColor + "; -fx-text-fill: " + textColor + "; -fx-background-radius: 20; -fx-padding: 10 30;");
     }
 
+    public static class BorrowRecord {
+        private final String bookId;
+        private final String title;
+        private final String borrowDate;
+        private final String status;
+
+        public BorrowRecord(String bookId, String title, String borrowDate, String status) {
+            this.bookId = bookId;
+            this.title = title;
+            this.borrowDate = borrowDate;
+            this.status = status;
+        }
+
+        public String getBookId() { return bookId; }
+        public String getTitle() { return title; }
+        public String getBorrowDate() { return borrowDate; }
+        public String getStatus() { return status; }
+    }
 }
