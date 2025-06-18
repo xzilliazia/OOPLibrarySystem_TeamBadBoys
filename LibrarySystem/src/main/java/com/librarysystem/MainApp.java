@@ -62,21 +62,21 @@ import java.util.ArrayList;
 //}
 
 //Login panel test
-//public class MainApp extends Application {
-//    @Override
-//    public void start(Stage stage) {
-//        new LoginMenu().show(stage);
-//    }
-//
-//    public static void main(String[] args) {
-//        launch(args);
-//    }
-//}
-public class MainApp{
+public class MainApp extends Application {
+    @Override
+    public void start(Stage stage) {
+        new LoginMenu().show(stage);
+    }
+
     public static void main(String[] args) {
-        Application.launch(StdDashboard.class, args);
+        launch(args);
     }
 }
+//public class MainApp{
+//    public static void main(String[] args) {
+//        Application.launch(StdDashboard.class, args);
+//    }
+//}
 //public class MainApp{
 //    public static void main(String[] args) {
 //        BorrowDashboard.launch(BorrowDashboard.class, args);

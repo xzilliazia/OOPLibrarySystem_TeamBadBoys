@@ -238,7 +238,7 @@ public class BookManager {
 
             ArrayList<Book> filtered = new ArrayList<>();
             for (Book book : found) {
-                if (book.getBookId().toLowerCase().contains(keyword.toLowerCase())
+                if (String.valueOf(book.getBookId()).contains(keyword.toLowerCase())
                         || book.getTitle().toLowerCase().contains(keyword.toLowerCase())
                         || book.getAuthor().toLowerCase().contains(keyword.toLowerCase())
                         || book.getCategory().toLowerCase().contains(keyword.toLowerCase())) {
@@ -255,7 +255,7 @@ public class BookManager {
     private void addBook(String title, String author, String category, String stockText) {
         try {
             int stock = Integer.parseInt(stockText);
-            PropertyBook pb = new PropertyBook("", title, author, category, stock);
+            PropertyBook pb = new PropertyBook(0, title, author, category, stock);
             data.add(pb);
             BookUtil.saveBook(new ArrayList<>(data.stream().map(PropertyBook::toBook).toList()));
             loadData();

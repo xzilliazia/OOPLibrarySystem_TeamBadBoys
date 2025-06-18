@@ -7,14 +7,14 @@ import javafx.beans.property.SimpleStringProperty;
 import java.util.ArrayList;
 
 public class PropertyBook {
-    private SimpleStringProperty id;
+    private SimpleIntegerProperty id;
     private SimpleStringProperty title;
     private SimpleStringProperty author;
     private SimpleStringProperty category;
     private SimpleIntegerProperty stock;
 
-    public PropertyBook(String id, String title, String author, String category, int stock) {
-        this.id = new SimpleStringProperty(id);
+    public PropertyBook(int id, String title, String author, String category, int stock) {
+        this.id = new SimpleIntegerProperty(id);
         this.title = new SimpleStringProperty(title);
         this.author = new SimpleStringProperty(author);
         this.category = new SimpleStringProperty(category);
@@ -31,7 +31,7 @@ public class PropertyBook {
     }
 
     //getters
-    public String getId() {
+    public int getId() {
         return id.get();
     }
     public String getTitle() {
@@ -47,7 +47,26 @@ public class PropertyBook {
         return stock.get();
     }
 
-    public SimpleStringProperty idProperty() {
+    public void setId(int id) {
+        this.id.set(id);
+    }
+    public void setTitle(String title) {
+
+    }
+
+    public void setAuthor(String author) {
+        this.author.set(author);
+    }
+
+    public void setCategory(String category) {
+        this.category.set(category);
+    }
+
+    public void setStock(int stock) {
+        this.stock.set(stock);
+    }
+
+    public SimpleIntegerProperty idProperty() {
         return id;
     }
     public SimpleStringProperty titleProperty() {

@@ -21,11 +21,8 @@ public class BorrowDashboard extends Application {
 
     private TableView<PropertyBook> tableView;
     private ObservableList<PropertyBook> data;
+    private User currentUser;
     private Stage previousStage;
-
-    public void setPreviousStage(Stage stage) {
-        this.previousStage = stage;
-    }
 
     @Override
     public void start(Stage stage) {
@@ -68,52 +65,62 @@ public class BorrowDashboard extends Application {
     }
 
     private VBox createSearchPanel() {
-        // Panel isi tombol dan input
-        VBox contentBox = new VBox(15);
-        contentBox.setAlignment(Pos.CENTER);
+            // Panel isi tombol dan input
+            VBox contentBox = new VBox(15);
+            contentBox.setAlignment(Pos.CENTER);
 
-        Button backBtn = new Button("←");
-        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: lightgray;");
-        backBtn.setOnAction(e -> {
-            new StdDashboard().start(previousStage);
-        });
+            Button backBtn = new Button("←");
+            backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: lightgray;");
+            backBtn.setOnAction(e -> {
+                if (previousStage != null) {
+                    // Close the current stage (BorrowDashboard)
+                    Stage currentStage = (Stage) backBtn.getScene().getWindow();
+                    currentStage.close();
 
-        Label title = new Label("CARI BUKU");
-        title.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold;");
+                    // Reopen the previous StdDashboard stage
+                    StdDashboard stdDashboard = new StdDashboard();
+                    stdDashboard.setCurrentUser(currentUser);
+                    stdDashboard.start(previousStage);
+                }
+            });
 
-        TextField searchField = new TextField();
-        searchField.setPromptText("Masukkan nama buku/Author");
-        searchField.setStyle("-fx-background-radius: 25; -fx-padding: 10; -fx-font-size: 12pt;");
+            Label title = new Label("CARI BUKU");
+            title.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold;");
 
-        Button searchBtn = new Button("Cari buku");
-        searchBtn.setStyle("-fx-background-radius: 25; -fx-background-color: orange; -fx-font-weight: bold; -fx-font-size: 14pt;");
-        searchBtn.setPrefWidth(200);
-        searchBtn.setPrefHeight(40);
-        searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
+            TextField searchField = new TextField();
+            searchField.setPromptText("Masukkan nama buku/Author");
+            searchField.setStyle("-fx-background-radius: 25; -fx-padding: 10; -fx-font-size: 12pt;");
 
-        Button pinjamBtn = new Button("Pinjam");
-        pinjamBtn.setStyle("-fx-background-radius: 25; -fx-background-color: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
-        pinjamBtn.setPrefWidth(200);
-        pinjamBtn.setPrefHeight(40);
-        pinjamBtn.setOnAction(e -> showAlert("Pinjam Buku", "Fitur pinjam dalam pengembangan."));
+            Button searchBtn = new Button("cari");
+            searchBtn.setStyle("-fx-background-radius: 25; -fx-background-color: orange; -fx-font-weight: bold; -fx-font-size: 14pt;");
+            searchBtn.setPrefWidth(200);
+            searchBtn.setPrefHeight(40);
+            searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
 
-        contentBox.getChildren().addAll(backBtn, title, searchField, searchBtn, pinjamBtn);
+            Button pinjamBtn = new Button("pinjam");
+            pinjamBtn.setStyle("-fx-background-radius: 25; -fx-background-color: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
+            pinjamBtn.setPrefWidth(200);
+            pinjamBtn.setPrefHeight(40);
+            pinjamBtn.setOnAction(e -> handlePinjam());
 
-        // Label catatan di bawah
-        Label catatan = new Label("*untuk pengembalian buku langsung ke petugas perpustakaan");
-        catatan.setStyle("-fx-font-size: 10pt;");
-        catatan.setWrapText(true);
+            contentBox.getChildren().addAll(backBtn, title, searchField, searchBtn, pinjamBtn);
 
-        // Bungkus semuanya dalam BorderPane
-        BorderPane panel = new BorderPane();
-        panel.setPadding(new Insets(60));
-        panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 25;");
-        panel.setCenter(contentBox);
-        panel.setBottom(catatan);
-        BorderPane.setMargin(catatan, new Insets(20, 0, 0, 0)); // jarak atas dari catatan
+            // Label catatan di bawah
+            Label catatan = new Label("*untuk pengembalian buku langsung ke petugas perpustakaan");
+            catatan.setStyle("-fx-font-size: 10pt;");
+            catatan.setWrapText(true);
 
-        return new VBox(panel);
-    }
+            // Bungkus semuanya dalam BorderPane
+            BorderPane panel = new BorderPane();
+            panel.setPadding(new Insets(60));
+            panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 25;");
+            panel.setCenter(contentBox);
+            panel.setBottom(catatan);
+            BorderPane.setMargin(catatan, new Insets(20, 0, 0, 0)); // jarak atas dari catatan
+
+            return new VBox(panel);
+        }
+
 
     private TableView<PropertyBook> createTableView() {
         TableView<PropertyBook> table = new TableView<>();
@@ -154,7 +161,7 @@ public class BorrowDashboard extends Application {
 
             ArrayList<Book> filtered = new ArrayList<>();
             for (Book book : found) {
-                if (book.getBookId().toLowerCase().contains(keyword.toLowerCase())
+                if (String.valueOf(book.getBookId()).contains(keyword)
                         || book.getTitle().toLowerCase().contains(keyword.toLowerCase())
                         || book.getAuthor().toLowerCase().contains(keyword.toLowerCase())
                         || book.getCategory().toLowerCase().contains(keyword.toLowerCase())) {
@@ -173,4 +180,59 @@ public class BorrowDashboard extends Application {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+
+    public Scene createScene() {
+        BorderPane root = new BorderPane();
+
+        // Build your UI (same as in start())
+        // ...
+        // Reuse your existing code, e.g. createSearchPanel(), createTableView(), etc.
+
+        // Example:
+        VBox leftPanel = createSearchPanel();
+        root.setLeft(leftPanel);
+
+        tableView = createTableView();
+        loadData();
+
+        VBox tableBox = new VBox(tableView);
+        root.setCenter(tableBox);
+
+        return new Scene(root, 1280, 800);
+    }
+
+    public void setPreviousStage(Stage stage) {
+        this.previousStage = stage;
+    }
+
+    private void handlePinjam() {
+        PropertyBook selected = tableView.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            showAlert("Pinjam Buku", "Silakan pilih buku yang ingin dipinjam.");
+            return;
+        }
+
+        if (selected.getStock() <= 0) {
+            showAlert("Pinjam Buku", "Stok buku habis. Tidak dapat dipinjam.");
+            return;
+        }
+
+        selected.setStock(selected.getStock() - 1);
+        BookUtil.updateBookStock(selected.getId(), selected.getStock());
+
+        // NEW: Insert borrow record!
+        BookUtil.insertBorrowRecord(currentUser.getUserId(), selected.getId());
+
+        tableView.refresh();
+
+        showAlert("Pinjam Buku", "Berhasil meminjam buku: " + selected.getTitle());
+    }
+
 }
+
+

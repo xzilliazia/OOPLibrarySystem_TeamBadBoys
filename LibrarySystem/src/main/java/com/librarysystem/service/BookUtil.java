@@ -1,11 +1,12 @@
 package com.librarysystem.service;
 
 import com.librarysystem.model.Book;
+import com.librarysystem.model.BorrowRecord;
 import com.librarysystem.util.DatabaseConnection;
 
-import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BookUtil {
 
@@ -19,7 +20,7 @@ public class BookUtil {
 
             while (rs.next()) {
                 bookList.add(new Book(
-                        rs.getString("id"),
+                        rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("author"),
                         rs.getString("category"),
@@ -32,42 +33,79 @@ public class BookUtil {
         return bookList;
     }
 
-    public static void saveBook(ArrayList<Book> bookList) {
-        String sqlInsert = "INSERT INTO books (title, author, category, stock) " +
-                "VALUES (?, ?, ?, ?) RETURNING id";
+    /**
+     * Loads the list of borrowed books for a specific user.
+     */
+    public static List<BorrowRecord> getBorrowsForUser(int userId) {
+        List<BorrowRecord> list = new ArrayList<>();
+        String sql = "SELECT b.title, br.borrow_date FROM borrowed_books br " +
+                "JOIN books b ON br.book_id = b.id " +
+                "WHERE br.user_id = ?";
 
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                list.add(new BorrowRecord(
+                        rs.getString("title"),
+                        rs.getString("borrow_date")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static void insertBorrowRecord(int userId, int bookId) {
+        String sql = "INSERT INTO borrowed_books (user_id, book_id, borrow_date) VALUES (?, ?, CURRENT_DATE)";
+
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, userId);
+            pstmt.setInt(2, bookId);
+
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void saveBook(ArrayList<Book> bookList) {
+        String sqlInsert = "INSERT INTO books (title, author, category, stock) VALUES (?, ?, ?, ?) RETURNING id";
         String sqlUpdate = "UPDATE books SET title = ?, author = ?, category = ?, stock = ? WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.connect()) {
             for (Book book : bookList) {
-                if (book.getBookId() == null || book.getBookId().isEmpty()) {
-                    // INSERT new book
+                if (book.getBookId() == 0) {
                     try (PreparedStatement pstmt = conn.prepareStatement(sqlInsert)) {
                         pstmt.setString(1, book.getTitle());
                         pstmt.setString(2, book.getAuthor());
                         pstmt.setString(3, book.getCategory());
                         pstmt.setInt(4, book.getStock());
-
                         try (ResultSet rs = pstmt.executeQuery()) {
                             if (rs.next()) {
-                                String generatedId = String.valueOf(rs.getInt("id"));
-                                book.setBookId(generatedId); // Assign new ID back to the book
+                                book.setBookId(rs.getInt("id"));
                             }
                         }
                     }
                 } else {
-                    // UPDATE existing book
                     try (PreparedStatement pstmt = conn.prepareStatement(sqlUpdate)) {
                         pstmt.setString(1, book.getTitle());
                         pstmt.setString(2, book.getAuthor());
                         pstmt.setString(3, book.getCategory());
                         pstmt.setInt(4, book.getStock());
-                        pstmt.setInt(5, Integer.parseInt(book.getBookId()));
+                        pstmt.setInt(5, book.getBookId());
                         pstmt.executeUpdate();
                     }
                 }
             }
-
             System.out.println("Books saved to database.");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -77,13 +115,13 @@ public class BookUtil {
     public static Book findBookById(String id) {
         ArrayList<Book> books = loadBooks();
         for (Book book : books) {
-            if (book.getBookId().equalsIgnoreCase(id)) {
+            if (String.valueOf(book.getBookId()).equalsIgnoreCase(id)) {
+
                 return book;
             }
         }
         return null;
     }
-
 
     public static void updateBook(Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, category = ?, stock = ? WHERE id = ?";
@@ -95,7 +133,7 @@ public class BookUtil {
             pstmt.setString(2, updatedBook.getAuthor());
             pstmt.setString(3, updatedBook.getCategory());
             pstmt.setInt(4, updatedBook.getStock());
-            pstmt.setLong(5, Long.parseLong(updatedBook.getBookId()));
+            pstmt.setInt(5, updatedBook.getBookId());
 
             int rows = pstmt.executeUpdate();
             if (rows > 0) {
@@ -116,8 +154,8 @@ public class BookUtil {
 
             pstmt.setString(1, idOrTitle);
             pstmt.setString(2, idOrTitle);
-            int rows = pstmt.executeUpdate();
 
+            int rows = pstmt.executeUpdate();
             if (rows > 0) {
                 System.out.println("Book(s) deleted.");
             } else {
@@ -128,6 +166,25 @@ public class BookUtil {
         }
     }
 
+    public static void updateBookStock(int id, int newStock) {
+        String sql = "UPDATE books SET stock = ? WHERE id = ?";
+
+        try (Connection conn = DatabaseConnection.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, newStock);
+            pstmt.setInt(2, id);
+
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Stock updated for book ID: " + id);
+            } else {
+                System.out.println("No book found with ID: " + id);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static ArrayList<Book> searchBooksByTitle(String keyword) {
         ArrayList<Book> result = new ArrayList<>();
@@ -141,7 +198,7 @@ public class BookUtil {
 
             while (rs.next()) {
                 result.add(new Book(
-                        rs.getString("id"),
+                        rs.getInt("id"),
                         rs.getString("title"),
                         rs.getString("author"),
                         rs.getString("category"),
