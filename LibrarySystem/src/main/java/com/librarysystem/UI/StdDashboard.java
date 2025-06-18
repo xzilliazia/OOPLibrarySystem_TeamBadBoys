@@ -33,17 +33,18 @@ public class StdDashboard extends Application {
         logo.setPreserveRatio(true);
 
         Label welcome = new Label("WELCOME TO\nUMM LIBRARY");
-        welcome.setStyle("-fx-font-size: 28pt; -fx-font-weight: bold; -fx-text-fill: white; -fx-text-alignment: center;");
+        applyFont(welcome, "28pt", true);
 
         Label name = new Label(Session.currentUser);
         name.setStyle("-fx-font-size: 16pt; -fx-text-fill: white;");
 
         Button btnPinjam = new Button("PINJAM");
-        btnPinjam.setStyle("-fx-font-size: 30PX;-fx-background-color: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 10 30;");
+        applyFont(btnPinjam, "30pt", true, "white");
         btnPinjam.setOnAction(e -> showBorrowMenu(stage));
 
         Button btnExit = new Button("KELUAR");
-        btnExit.setStyle("-fx-font-size: 30PX;-fx-background-color: orange; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 10 30;");
+        btnExit.setStyle("-fx-background-color: yellow");
+        applyFont(btnExit, "30pt", true, "yellow");
         btnExit.setOnAction(e -> stage.close());
 
         VBox centerBox = new VBox(20, logo, welcome, name, btnPinjam, btnExit);
@@ -67,4 +68,16 @@ public class StdDashboard extends Application {
         StdDashboard menu = new StdDashboard();
         menu.start(stage); // Ganti scene saat ini
     }
+
+    private void applyFont(Label label, String size, boolean bold) {
+        String weight = bold ? "bold" : "normal";
+        label.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight + "; -fx-text-fill: white;");
+    }
+
+    private void applyFont(Button button, String size, boolean bold, String color) {
+        String weight = bold ? "bold" : "normal";
+        button.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size + "; -fx-font-weight: " + weight +
+                "; -fx-background-color: " + color + "; -fx-background-radius: 20; -fx-padding: 10 30;");
+    }
+
 }

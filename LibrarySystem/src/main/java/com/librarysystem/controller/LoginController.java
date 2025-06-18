@@ -2,6 +2,7 @@ package com.librarysystem.controller;
 
 import com.librarysystem.UI.BookManager;
 import com.librarysystem.util.DatabaseConnection;
+import com.librarysystem.util.Session;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,6 +21,10 @@ public class LoginController {
 
     public void login(String username, String password, Stage currentStage) {
         Role role = authenticate(username, password);
+        if (role != Role.INVALID) {
+            Session.currentUser = username;
+            Session.currentRole = role;
+        }
 
         switch (role) {
             case ADMIN:
