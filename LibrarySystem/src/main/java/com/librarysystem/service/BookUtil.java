@@ -74,6 +74,16 @@ public class BookUtil {
         }
     }
 
+    public static Book findBookById(String id) {
+        ArrayList<Book> books = loadBooks();
+        for (Book book : books) {
+            if (book.getBookId().equalsIgnoreCase(id)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
 
     public static void updateBook(Book updatedBook) {
         String sql = "UPDATE books SET title = ?, author = ?, category = ?, stock = ? WHERE id = ?";
@@ -85,7 +95,7 @@ public class BookUtil {
             pstmt.setString(2, updatedBook.getAuthor());
             pstmt.setString(3, updatedBook.getCategory());
             pstmt.setInt(4, updatedBook.getStock());
-            pstmt.setString(5, updatedBook.getBookId());
+            pstmt.setLong(5, Long.parseLong(updatedBook.getBookId()));
 
             int rows = pstmt.executeUpdate();
             if (rows > 0) {
@@ -98,24 +108,26 @@ public class BookUtil {
         }
     }
 
-    public static void deleteBook(String bookId) {
-        String sql = "DELETE FROM books WHERE id = ?";
+    public static void deleteBook(String idOrTitle) {
+        String sql = "DELETE FROM books WHERE id::text = ? OR LOWER(title) = LOWER(?)";
 
         try (Connection conn = DatabaseConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setString(1, bookId);
+            pstmt.setString(1, idOrTitle);
+            pstmt.setString(2, idOrTitle);
             int rows = pstmt.executeUpdate();
 
             if (rows > 0) {
-                System.out.println("Book deleted.");
+                System.out.println("Book(s) deleted.");
             } else {
-                System.out.println("Book ID not found.");
+                System.out.println("No matching book found.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public static ArrayList<Book> searchBooksByTitle(String keyword) {
         ArrayList<Book> result = new ArrayList<>();
