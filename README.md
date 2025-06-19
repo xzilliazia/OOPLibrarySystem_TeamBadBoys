@@ -8,7 +8,10 @@
 
 A modern library management system for Universitas Muhammadiyah Malang (UMM) with admin and student portals, built using JavaFX and PostgreSQL.
 
-![System Architecture Diagram](screenshots/architecture.png)
+## System Architecture
+
+[![MVC Architecture Diagram](https://drive.google.com/uc?export=view&id=1JDIeni4u3TiIBjZBV_JM7G_gC4JXF4d5)](https://drive.google.com/file/d/1JDIeni4u3TiIBjZBV_JM7G_gC4JXF4d5/view?usp=sharing)
+*Click image to view full resolution*
 
 ## Features
 
