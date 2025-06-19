@@ -29,6 +29,7 @@ public class AdminDashboard {
         this.currentUser = Session.currentUser;
         Scene scene = createScene(stage);
 
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.setTitle("Admin Dashboard");
         stage.show();
@@ -127,6 +128,7 @@ public class AdminDashboard {
             Scene userScene = new Scene(layout, 600, 400);
             userStage = new Stage(); // Simpan ke field
             userStage.setTitle("Kelola User (Student)");
+            userStage.setResizable(false);
             userStage.setScene(userScene);
 
             // Reset field saat ditutup

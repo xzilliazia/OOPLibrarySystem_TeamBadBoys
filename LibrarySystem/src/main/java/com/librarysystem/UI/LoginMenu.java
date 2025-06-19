@@ -8,7 +8,11 @@ import javafx.scene.control.*;
 import javafx.scene.image.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
+import javafx.scene.effect.*;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
@@ -22,6 +26,7 @@ public class LoginMenu {
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.setTitle("Umm Library System - Login");
         stage.show();
     }
@@ -43,7 +48,7 @@ public class LoginMenu {
         logo.setPreserveRatio(true);
 
         Label welcomeLabel = new Label("WELCOME TO\nUMM LIBRARY");
-        welcomeLabel.setFont(Font.font("Lilita One", 45));
+        welcomeLabel.setFont(Font.font("Tahoma", FontWeight.BOLD,40));
         welcomeLabel.setTextFill(Color.WHITE);
         welcomeLabel.setTextAlignment(TextAlignment.CENTER);
         welcomeLabel.setWrapText(true);
@@ -70,7 +75,7 @@ public class LoginMenu {
         formBox.setStyle("-fx-background-color: rgba(255,255,255,0.75); -fx-background-radius: 20;");
 
         Label titleLabel = new Label("LOG IN HERE");
-        titleLabel.setFont(Font.font("Arial", 36));
+        titleLabel.setFont(Font.font("Impact", 36));
         titleLabel.setTextFill(Color.BLACK);
         titleLabel.setLayoutX(66.5);
         titleLabel.setLayoutY(30);
@@ -125,6 +130,7 @@ public class LoginMenu {
         tf.setLayoutX(x);
         tf.setLayoutY(y);
         tf.setPrefSize(421, 53.93);
+        tf.setFont(Font.font("Tahoma", 15));
         tf.setStyle("-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: lightgray; -fx-padding: 10; -fx-background-color: white;");
         return tf;
     }

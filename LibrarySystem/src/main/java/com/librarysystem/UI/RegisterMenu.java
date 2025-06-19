@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -24,6 +25,7 @@ public class RegisterMenu {
 
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.setTitle("UMM Library System - Register");
         stage.show();
     }
@@ -45,7 +47,7 @@ public class RegisterMenu {
         logo.setPreserveRatio(true);
 
         Label welcomeLabel = new Label("WELCOME TO\nUMM LIBRARY");
-        welcomeLabel.setFont(Font.font("Lilita One", 45));
+        welcomeLabel.setFont(Font.font("Tahoma", FontWeight.BOLD, 40));
         welcomeLabel.setTextFill(Color.WHITE);
         welcomeLabel.setTextAlignment(TextAlignment.CENTER);
         welcomeLabel.setWrapText(true);
@@ -72,7 +74,7 @@ public class RegisterMenu {
         formBox.setStyle("-fx-background-color: rgba(255,255,255,0.75); -fx-background-radius: 20;");
 
         Label titleLabel = new Label("REGISTER");
-        titleLabel.setFont(Font.font("Arial", 36));
+        titleLabel.setFont(Font.font("Impact", 36));
         titleLabel.setTextFill(Color.BLACK);
         titleLabel.setLayoutX(66.5);
         titleLabel.setLayoutY(30);
@@ -108,7 +110,7 @@ public class RegisterMenu {
         });
 
         Button backBtn = new Button("←");
-        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: #c6a3a3;");
+        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 30pt; -fx-background-color: transparent;");
         backBtn.setOnAction(e -> {
             stage.close();
             new LoginMenu().show(stage);
@@ -147,6 +149,7 @@ public class RegisterMenu {
         tf.setLayoutX(x);
         tf.setLayoutY(y);
         tf.setPrefSize(421, 53.93);
+        tf.setFont(Font.font("Tahoma", 15));
         tf.setStyle("-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: lightgray; -fx-padding: 10; -fx-background-color: white;");
         return tf;
     }

@@ -61,6 +61,7 @@ public class BorrowDashboard extends Application {
 
         Scene scene = new Scene(root, 1280, 800);
         stage.setTitle("Student Book Search");
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.show();
     }

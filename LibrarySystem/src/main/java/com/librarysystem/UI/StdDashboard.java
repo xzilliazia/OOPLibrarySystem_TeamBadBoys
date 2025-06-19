@@ -148,6 +148,7 @@ public class StdDashboard extends Application {
 
         Scene scene = new Scene(root, 1280, 800);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.setTitle("User Dashboard");
         stage.show();
     }

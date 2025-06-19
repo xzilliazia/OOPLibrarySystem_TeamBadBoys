@@ -21,6 +21,7 @@ public class BookManager {
 
     public void start(Stage stage) {
         Scene scene = createScene(stage);
+        stage.setResizable(false);
         stage.setScene(scene);
         stage.setTitle("Book Manager");
         stage.show();
