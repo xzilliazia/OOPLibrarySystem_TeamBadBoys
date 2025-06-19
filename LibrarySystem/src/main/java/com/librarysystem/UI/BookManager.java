@@ -31,7 +31,7 @@ public class BookManager {
         // Root with background
         BorderPane root = new BorderPane();
         BackgroundImage bgImage = new BackgroundImage(
-                new Image(getClass().getResource("/img/background.jpg").toExternalForm(), 1280, 800, false, true),
+                new Image(getClass().getResource("/img/for admin.jpg").toExternalForm(), 1280, 800, false, true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(1280, 800, false, false, false, false)
