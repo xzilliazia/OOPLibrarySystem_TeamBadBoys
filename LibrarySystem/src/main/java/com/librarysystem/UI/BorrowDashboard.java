@@ -31,7 +31,7 @@ public class BorrowDashboard extends Application {
 
         // Set background
         BackgroundImage bgImage = new BackgroundImage(
-                new Image(getClass().getResource("/img/background2.jpg").toExternalForm(), 1280, 800, false, true),
+                new Image(getClass().getResource("/img/for user.jpg").toExternalForm(), 1280, 800, false, true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(1280, 800, false, false, false, false)
@@ -72,7 +72,7 @@ public class BorrowDashboard extends Application {
             contentBox.setAlignment(Pos.CENTER);
 
             Button backBtn = new Button("←");
-            backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: lightgray;");
+            backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: red;");
             backBtn.setOnAction(e -> {
                 if (previousStage != null) {
                     // Close the current stage (BorrowDashboard)
