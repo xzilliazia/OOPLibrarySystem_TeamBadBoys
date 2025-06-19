@@ -58,3 +58,10 @@ A modern library management system for Universitas Muhammadiyah Malang (UMM) wit
 | Project Lead | Zia         | System architecture, Core functionality |
 | Backend Dev | Hapis       | Database design, Business logic         |
 | Frontend Dev| Jecks       | UI/UX design, JavaFX implementation     |
+
+## 1. Database Setup
+## Create database (PostgreSQL)
+ createdb library
+
+## Run schema script
+ psql -d library -f src/main/resources/database/schema.sql
