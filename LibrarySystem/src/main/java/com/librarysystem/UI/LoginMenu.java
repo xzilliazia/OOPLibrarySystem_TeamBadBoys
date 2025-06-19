@@ -32,7 +32,7 @@ public class LoginMenu {
     }
 
     private Pane createRootPane() {
-        Image backgroundImg = new Image(getClass().getResource("/img/background.jpg").toExternalForm());
+        Image backgroundImg = new Image(getClass().getResource("/img/for login and register panel.jpg").toExternalForm());
         BackgroundImage background = new BackgroundImage(backgroundImg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER, new BackgroundSize(1280, 800, false, false, false, false));
         Pane root = new Pane();
@@ -135,19 +135,26 @@ public class LoginMenu {
         return tf;
     }
 
-    private Button createButton(String text, double width, double height, String bgColor, String borderColor) {
-        Button btn = new Button(text);
-        btn.setPrefSize(width, height);
-        btn.setStyle(
-                "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 20;" +
-                        "-fx-border-radius: 20;" +
-                        "-fx-border-color: " + borderColor + ";" +
-                        "-fx-padding: 10;" +
-                        "-fx-background-color: " + bgColor + ";"
-        );
-        return btn;
-    }
+
+private Button createButton(String text, double width, double height, String bgColor, String borderColor) {
+    Button btn = new Button(text);
+    btn.setPrefSize(width, height);
+
+    String normalStyle = "-fx-font-weight: bold;" +
+            "-fx-background-radius: 20;" +
+            "-fx-border-radius: 20;" +
+            "-fx-border-color: " + borderColor + ";" +
+            "-fx-padding: 10;" +
+            "-fx-background-color: " + bgColor +";" +
+            "-fx-text-fill: black;";
+
+    btn.setStyle(normalStyle);
+
+    btn.setOnMouseEntered(e -> btn.setStyle(normalStyle));
+    btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
+    return btn;
+}
 
     private void showAlert(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
