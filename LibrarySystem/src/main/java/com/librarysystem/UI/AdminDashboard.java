@@ -40,7 +40,7 @@ public class AdminDashboard {
 
         // ✅ Background image
         BackgroundImage bg = new BackgroundImage(
-                new Image(getClass().getResource("/img/background.jpg").toExternalForm(), 1280, 800, false, true),
+                new Image(getClass().getResource("/img/for admin.jpg").toExternalForm(), 1280, 800, false, true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(1280, 800, false, false, false, false)
@@ -59,14 +59,14 @@ public class AdminDashboard {
         userLabel.setAlignment(Pos.CENTER);
 
         Button btnManageBuku = new Button("Kelola Buku");
-        applyFont(btnManageBuku, "14pt", true, "#4CAF50", "white");
+        applyFont(btnManageBuku, "14pt", true, "orange", "black");
         btnManageBuku.setOnAction(e -> {
             stage.close();
             new BookManager().start(stage);
         });
 
         Button btnHapusUser = new Button("Hapus User");
-        applyFont(btnHapusUser, "14pt", true, "#f44336", "white");
+        applyFont(btnHapusUser, "14pt", true, "orange", "black");
         btnHapusUser.setOnAction(e -> {
             if (userStage != null && userStage.isShowing()) {
                 userStage.toFront();
@@ -138,11 +138,20 @@ public class AdminDashboard {
         });
 
         Button btnExit = new Button("KELUAR");
-        applyFont(btnExit, "14pt", true, "orange", "black");
+        applyFont(btnExit, "14pt", true, "white", "black");
         btnExit.setOnAction(e -> {
-            stage.close();  // close the current dashboard
-            new LoginMenu().show(new Stage());
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Konfirmasi Keluar");
+            alert.setHeaderText("Apakah Anda ingin keluar?");
+            alert.getButtonTypes().setAll(ButtonType.YES, ButtonType.NO);
+            alert.showAndWait().ifPresent(response -> {
+                if (response == ButtonType.YES) {
+                    new LoginMenu().show(stage);
+                }
+                // Jika "NO", tidak melakukan apa-apa (tetap di halaman sekarang)
+            });
         });
+
 
         sidebar.getChildren().addAll(userLabel, btnManageBuku, btnHapusUser, btnExit);
         VBox leftContainer = new VBox(sidebar);
