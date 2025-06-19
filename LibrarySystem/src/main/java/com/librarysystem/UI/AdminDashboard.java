@@ -53,8 +53,8 @@ public class AdminDashboard {
         sidebar.setAlignment(Pos.TOP_CENTER);
         sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
 
-        Label userLabel = new Label(currentUser.getUsername());
-        applyFont(userLabel, "18pt", true);
+        Label userLabel = new Label("Selamat Datang, \n" + currentUser.getUsername());
+        applyFont(userLabel, "14pt", true);
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
