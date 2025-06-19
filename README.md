@@ -10,7 +10,7 @@ A modern library management system for Universitas Muhammadiyah Malang (UMM) wit
 
 ## System Architecture
 
-[![MVC Architecture Diagram]((https://drive.google.com/file/d/11cLtgHysjicz7uve2r6_9mINMnzQXZR0/view?usp=sharing))
+[![MVC Architecture Diagram](https://drive.google.com/uc?export=view&id=11cLtgHysjicz7uve2r6_9mINMnzQXZR0)](https://drive.google.com/file/d/11cLtgHysjicz7uve2r6_9mINMnzQXZR0/view?usp=drive_link)
 *Click image to view full resolution*
 
 ## 🔄 System Workflow
