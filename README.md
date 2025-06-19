@@ -20,17 +20,6 @@ A modern library management system for Universitas Muhammadiyah Malang (UMM) wit
 
 *Click image to view full resolution*
 
-### Key Stages
-1. **Authentication** 
-   - Role-based routing (Admin/Student)
-   - JWT validation
-2. **Book Borrowing**  
-   ```mermaid
-   graph LR
-   A[Request] --> B{Available?}
-   B -->|Yes| C[Create Record]
-   B -->|No| D[Notify Student]
-
 ## Features
 
 ### 🎯 Core Functionality
