@@ -42,7 +42,7 @@ A modern library management system for Universitas Muhammadiyah Malang (UMM) wit
 | Database        | PostgreSQL 15                       |
 | Architecture    | MVC Pattern                         |
 | ORM             | JDBC (Native SQL)                   |
-| UI/UX           | Custom CSS Styling                  |
+| UI/UX           | JavaFX                |
 
 ## Development Team
 
