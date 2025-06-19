@@ -13,6 +13,24 @@ A modern library management system for Universitas Muhammadiyah Malang (UMM) wit
 [![MVC Architecture Diagram](https://drive.google.com/uc?export=view&id=1JDIeni4u3TiIBjZBV_JM7G_gC4JXF4d5)](https://drive.google.com/file/d/1JDIeni4u3TiIBjZBV_JM7G_gC4JXF4d5/view?usp=sharing)
 *Click image to view full resolution*
 
+## 🔄 System Workflow
+
+### Core Process Flow
+[![Library System Flowchart](https://drive.google.com/uc?export=view&id=1rvOgaROhmhUf9AWLlOLgkrjF-CjtjEUb)](https://drive.google.com/file/d/1rvOgaROhmhUf9AWLlOLgkrjF-CjtjEUb/view?usp=sharing)
+
+*Click image to view full resolution*
+
+### Key Stages
+1. **Authentication** 
+   - Role-based routing (Admin/Student)
+   - JWT validation
+2. **Book Borrowing**  
+   ```mermaid
+   graph LR
+   A[Request] --> B{Available?}
+   B -->|Yes| C[Create Record]
+   B -->|No| D[Notify Student]
+
 ## Features
 
 ### 🎯 Core Functionality
