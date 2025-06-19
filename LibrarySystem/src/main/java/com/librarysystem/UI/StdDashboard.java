@@ -39,7 +39,7 @@ public class StdDashboard extends Application {
 
         // Background
         BackgroundImage bg = new BackgroundImage(
-                new Image(getClass().getResource("/img/background.jpg").toExternalForm(), 1280, 800, false, true),
+                new Image(getClass().getResource("/img/for user.jpg").toExternalForm(), 1280, 800, false, true),
                 BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER,
                 new BackgroundSize(1280, 800, false, false, false, false)
@@ -52,13 +52,13 @@ public class StdDashboard extends Application {
         sidebar.setAlignment(Pos.TOP_CENTER);
         sidebar.setStyle("-fx-background-color: rgba(255,255,255,0.8); -fx-background-radius: 20;");
 
-        userLabel = new Label(Session.currentUser.getUsername());
+        userLabel = new Label("Selamat Datang, " + Session.currentUser.getUsername());
         applyFont(userLabel, "18pt", true);
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
         Button btnPinjam = new Button("PINJAM");
-        applyFont(btnPinjam, "14pt", true, "white", "black");
+        applyFont(btnPinjam, "14pt", true, "orange", "black");
         btnPinjam.setOnAction(e -> {
             BorrowDashboard borrow = new BorrowDashboard();
             borrow.setCurrentUser(currentUser);
@@ -72,7 +72,7 @@ public class StdDashboard extends Application {
         btnEditProfile.setOnAction(e -> handleEditProfile());
 
         Button btnExit = new Button("KELUAR");
-        applyFont(btnExit, "14pt", true, "orange", "black");
+        applyFont(btnExit, "14pt", true, "white", "black");
         btnExit.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Konfirmasi Keluar");
