@@ -31,7 +31,7 @@ public class RegisterMenu {
     }
 
     private Pane createRootPane() {
-        Image backgroundImg = new Image(getClass().getResource("/img/background.jpg").toExternalForm());
+        Image backgroundImg = new Image(getClass().getResource("/img/for login and register panel.jpg").toExternalForm());
         BackgroundImage background = new BackgroundImage(backgroundImg, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT,
                 BackgroundPosition.CENTER, new BackgroundSize(1280, 800, false, false, false, false));
         Pane root = new Pane();
@@ -77,18 +77,18 @@ public class RegisterMenu {
         titleLabel.setFont(Font.font("Impact", 36));
         titleLabel.setTextFill(Color.BLACK);
         titleLabel.setLayoutX(66.5);
-        titleLabel.setLayoutY(30);
+        titleLabel.setLayoutY(80);
         titleLabel.setPrefSize(400, 49.94);
         titleLabel.setAlignment(Pos.CENTER);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
 
-        TextField usernameField = createTextField("Masukkan Username", 50, 100);
-        TextField passwordField = createTextField("Masukkan Password", 50, 170);
-        TextField prodiField = createTextField("Prodi", 50, 240);
+        TextField usernameField = createTextField("Masukkan Username", 50, 150);
+        TextField passwordField = createTextField("Masukkan Password", 50, 220);
+        TextField prodiField = createTextField("Prodi", 50, 290);
 
         Button registerButton = createButton("REGISTER", 230, 53.93, "yellow", "yellow");
         registerButton.setLayoutX(151.5);
-        registerButton.setLayoutY(320);
+        registerButton.setLayoutY(400);
         registerButton.setOnAction(e -> {
             String username = usernameField.getText().trim();
             String password = passwordField.getText().trim();
@@ -116,7 +116,6 @@ public class RegisterMenu {
             new LoginMenu().show(stage);
         });
 
-
         formBox.getChildren().addAll(titleLabel, usernameField, passwordField, prodiField, registerButton, backBtn);
 
         registerButton.setOnAction(e -> {
@@ -142,6 +141,7 @@ public class RegisterMenu {
 
         return formBox;
     }
+
 
     private TextField createTextField(String prompt, double x, double y) {
         TextField tf = new TextField();
