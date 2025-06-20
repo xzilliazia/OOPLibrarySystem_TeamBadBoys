@@ -239,46 +239,84 @@ public class RegisterMenu {
         return tf;
     }
 
-    private Button createButton(String text, double width, double height, String bgColor, String borderColor) {
-        Button btn = new Button(text);
-        btn.setPrefSize(width, height);
-        btn.setStyle(
-                "-fx-font-weight: bold;" +
-                        "-fx-background-radius: 20;" +
-                        "-fx-border-radius: 20;" +
-                        "-fx-border-color: " + borderColor + ";" +
-                        "-fx-padding: 10;" +
-                        "-fx-background-color: " + bgColor + ";"
-        );
-        return btn;
-    }
-
     private Button createRegisterButton(String text, double width, double height) {
         Button btn = new Button(text);
         btn.setPrefSize(width, height);
 
+        // Normal state
         String normalStyle = "-fx-font-weight: bold;" +
                 "-fx-background-radius: 20;" +
                 "-fx-border-radius: 20;" +
-                "-fx-border-color: yellow;" +
-                "-fx-border-width: 2;" +  // Tambahkan ketebalan border
+                "-fx-border-color: #FFD700;" + // Gold color
+                "-fx-border-width: 2;" +
                 "-fx-padding: 10;" +
-                "-fx-background-color: yellow;" +
-                "-fx-text-fill: black;";
+                "-fx-background-color: #FFD700;" + // Gold background
+                "-fx-text-fill: black;" +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);";
 
+        // Hover state
         String hoverStyle = "-fx-font-weight: bold;" +
                 "-fx-background-radius: 20;" +
                 "-fx-border-radius: 20;" +
-                "-fx-border-color: #ffcc00;" +  // Hanya ubah border color
+                "-fx-border-color: #FFC000;" + // Darker gold border
                 "-fx-border-width: 2;" +
                 "-fx-padding: 10;" +
-                "-fx-background-color: yellow;" +  // Background tetap sama
-                "-fx-text-fill: black;";
+                "-fx-background-color: #FFD700;" + // Same gold background
+                "-fx-text-fill: black;" +
+                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 4, 0, 0, 2);";
+
+        // Focused state (when tabbed into)
+        String focusedStyle = "-fx-font-weight: bold;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: #b88d21;" + // Blue border for focus
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: #FFC000;" + // Gold background
+                "-fx-text-fill: black;" +
+                "-fx-effect: dropshadow(gaussian, rgba(74,144,226,0.3), 6, 0, 0, 3);";
+
+        // Pressed state
+        String pressedStyle = "-fx-font-weight: bold;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: #493d01;" + // Blue border
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: #FFC000;" + // Darker gold when pressed
+                "-fx-text-fill: black;" +
+                "-fx-effect: dropshadow(gaussian, rgba(74,144,226,0.4), 3, 0, 0, 1);";
 
         btn.setStyle(normalStyle);
 
+        // Hover effects
         btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
-        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+        btn.setOnMouseExited(e -> {
+            if (!btn.isFocused()) {
+                btn.setStyle(normalStyle);
+            }
+        });
+
+        // Focus effects
+        btn.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                btn.setStyle(focusedStyle);
+            } else {
+                btn.setStyle(normalStyle);
+            }
+        });
+
+        // Pressed effect
+        btn.setOnMousePressed(e -> btn.setStyle(pressedStyle));
+        btn.setOnMouseReleased(e -> {
+            if (btn.isHover()) {
+                btn.setStyle(hoverStyle);
+            } else if (btn.isFocused()) {
+                btn.setStyle(focusedStyle);
+            } else {
+                btn.setStyle(normalStyle);
+            }
+        });
 
         return btn;
     }
