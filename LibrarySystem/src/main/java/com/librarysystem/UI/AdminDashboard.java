@@ -58,15 +58,13 @@ public class AdminDashboard {
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
-        Button btnManageBuku = new Button("Kelola Buku");
-        applyFont(btnManageBuku, "14pt", true, "orange", "black");
+        Button btnManageBuku = createHoverBorderButton("Kelola Buku", "orange", "orange", "#ff8000");
         btnManageBuku.setOnAction(e -> {
             stage.close();
             new BookManager().start(stage);
         });
 
-        Button btnHapusUser = new Button("Hapus User");
-        applyFont(btnHapusUser, "14pt", true, "orange", "black");
+        Button btnHapusUser = createHoverBorderButton("Hapus User", "orange", "orange", "#ff8000");
         btnHapusUser.setOnAction(e -> {
             if (userStage != null && userStage.isShowing()) {
                 userStage.toFront();
@@ -88,10 +86,9 @@ public class AdminDashboard {
 
             TableColumn<User, Void> actionCol = new TableColumn<>("Aksi");
             actionCol.setCellFactory(col -> new TableCell<>() {
-                private final Button deleteBtn = new Button("Hapus");
+                private final Button deleteBtn = createDeleteButton();
 
                 {
-                    deleteBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 10; -fx-padding: 5 15;");
                     deleteBtn.setOnAction(e2 -> {
                         User selectedUser = getTableView().getItems().get(getIndex());
                         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION,
@@ -137,8 +134,7 @@ public class AdminDashboard {
             userStage.show();
         });
 
-        Button btnExit = new Button("KELUAR");
-        applyFont(btnExit, "14pt", true, "white", "black");
+        Button btnExit = createHoverBorderButton("KELUAR", "white", "white", "#a0a0a0");
         btnExit.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Konfirmasi Keluar");
@@ -292,16 +288,75 @@ public class AdminDashboard {
         return students;
     }
 
+    private Button createHoverBorderButton(String text, String bgColor, String borderColor, String hoverBorderColor) {
+        Button btn = new Button(text);
+
+        // Normal style
+        String normalStyle = "-fx-font-family: 'Poppins';" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 14pt;" +
+                "-fx-background-color: " + bgColor + ";" +
+                "-fx-text-fill: black;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: " + borderColor + ";" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10 30;";
+
+        // Hover style (only border changes)
+        String hoverStyle = "-fx-font-family: 'Poppins';" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 14pt;" +
+                "-fx-background-color: " + bgColor + ";" +
+                "-fx-text-fill: black;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: " + hoverBorderColor + ";" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10 30;";
+
+        btn.setStyle(normalStyle);
+
+        // Hover effects
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
+        return btn;
+    }
+
+    private Button createDeleteButton() {
+        Button btn = new Button("Hapus");
+
+        // Normal style
+        String normalStyle = "-fx-background-color: #f44336;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-radius: 10;" +
+                "-fx-padding: 5 15;" +
+                "-fx-border-color: #f44336;" +
+                "-fx-border-radius: 10;" +
+                "-fx-border-width: 2;";
+
+        // Hover style (only border changes)
+        String hoverStyle = "-fx-background-color: #f44336;" +
+                "-fx-text-fill: white;" +
+                "-fx-background-radius: 10;" +
+                "-fx-padding: 5 15;" +
+                "-fx-border-color: #8e0a0a;" + // Darker red border
+                "-fx-border-radius: 10;" +
+                "-fx-border-width: 2;";
+
+        btn.setStyle(normalStyle);
+
+        // Hover effects
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
+        return btn;
+    }
+
     private void applyFont(Label label, String size, boolean bold) {
         String weight = bold ? "bold" : "normal";
         label.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size +
                 "; -fx-font-weight: " + weight + "; -fx-text-fill: black;");
-    }
-
-    private void applyFont(Button button, String size, boolean bold, String bgColor, String textColor) {
-        String weight = bold ? "bold" : "normal";
-        button.setStyle("-fx-font-family: 'Poppins'; -fx-font-size: " + size +
-                "; -fx-font-weight: " + weight + "; -fx-background-color: " + bgColor +
-                "; -fx-text-fill: " + textColor + "; -fx-background-radius: 20; -fx-padding: 10 30;");
     }
 }

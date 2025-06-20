@@ -62,25 +62,24 @@ public class BookManager {
 
         TextField searchField = createStyledTextField("Nama Buku/ID Buku");
         searchField.setPrefWidth(200);
-        Button searchBtn = createStyledButton("Cari", "#FFA500");
+        Button searchBtn = createHoverBorderButton("Cari", "#FFA500", "#FFA500", "#cc8400");
         searchBtn.setPrefWidth(200);
         searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
 
-        Button addBtn = createStyledButton("TAMBAH BUKU", "#FFA500");
+        Button addBtn = createHoverBorderButton("TAMBAH BUKU", "#FFA500", "#FFA500", "#cc8400");
         addBtn.setPrefWidth(200);
         addBtn.setOnAction(e -> openAddBookWindow());
 
-        Button editBtn = createStyledButton("EDIT BUKU", "#FFA500");
+        Button editBtn = createHoverBorderButton("EDIT BUKU", "#FFA500", "#FFA500", "#cc8400");
         editBtn.setPrefWidth(200);
         editBtn.setOnAction(e -> openEditBookWindow());
 
-        Button delBtn = createStyledButton("HAPUS BUKU", "#FFA500");
+        Button delBtn = createHoverBorderButton("HAPUS BUKU", "#FFA500", "#FFA500", "#cc8400");
         delBtn.setPrefWidth(200);
         delBtn.setOnAction(e -> openDeleteBookWindow());
 
 
-        Button backBtn = new Button("←");
-        backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: #d82e2e;");
+        Button backBtn = createBackButton();
         backBtn.setOnAction(e -> {
             stage.close();
             new AdminDashboard().start(stage);
@@ -117,7 +116,7 @@ public class BookManager {
 
         HBox categoryStockBox = new HBox(10, category, stock);
 
-        Button submit = createStyledButton("Tambah", "#FFA500");
+        Button submit = createHoverBorderButton("Tambah", "#FFA500", "#FFA500", "#cc8400");
         submit.setOnAction(e -> {
             addBook(title.getText(), author.getText(), category.getText(), stock.getText());
             popup.close();
@@ -160,7 +159,7 @@ public class BookManager {
 
             HBox catStockBox = new HBox(10, categoryField, stockField);
 
-            Button submit = createStyledButton("Simpan Perubahan", "#FFA500");
+            Button submit = createHoverBorderButton("Simpan Perubahan", "#FFA500", "#FFA500", "#cc8400");
             submit.setOnAction(e -> {
                 try {
                     String newTitle = titleField.getText().isEmpty() ? bookToEdit.getTitle() : titleField.getText();
@@ -200,7 +199,7 @@ public class BookManager {
         TextField idDelete = createStyledTextField("");
         VBox idFieldDeleteGroup = new VBox(5, idLabel, idDelete);
 
-        Button submit = createStyledButton("Hapus", "#FFA500");
+        Button submit = createHoverBorderButton("Hapus", "#FFA500", "#FFA500", "#cc8400");
         submit.setOnAction(e -> {
             deleteBook(idDelete.getText());
             popup.close();
@@ -300,13 +299,69 @@ public class BookManager {
         return tf;
     }
 
-    private Button createStyledButton(String text, String color) {
+    private Button createHoverBorderButton(String text, String bgColor, String borderColor, String hoverBorderColor) {
         Button btn = new Button(text);
-        btn.setStyle("-fx-font-weight: bold; " +
-                "-fx-background-radius: 20; -fx-border-radius: 20; " +
-                "-fx-border-color: " + color + "; -fx-padding: 10 20 10 20; " +
-                "-fx-background-color: " + color + "; -fx-text-fill: white;");
+
+        // Normal style
+        String normalStyle = "-fx-font-weight: bold; " +
+                "-fx-background-radius: 20; " +
+                "-fx-border-radius: 20; " +
+                "-fx-border-color: " + borderColor + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-padding: 10 20; " +
+                "-fx-background-color: " + bgColor + "; " +
+                "-fx-text-fill: white;";
+
+        // Hover style (only border changes)
+        String hoverStyle = "-fx-font-weight: bold; " +
+                "-fx-background-radius: 20; " +
+                "-fx-border-radius: 20; " +
+                "-fx-border-color: " + hoverBorderColor + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-padding: 10 20; " +
+                "-fx-background-color: " + bgColor + "; " +
+                "-fx-text-fill: white;";
+
+        btn.setStyle(normalStyle);
+
+        // Hover effects
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
         return btn;
+    }
+
+    private Button createBackButton() {
+        Button backBtn = new Button("←");
+
+        // Normal style
+        String normalStyle = "-fx-background-radius: 50%; " +
+                "-fx-min-width: 40px; " +
+                "-fx-min-height: 40px; " +
+                "-fx-font-size: 20pt; " +
+                "-fx-text-fill: #a0a0a0; " + // Gray arrow
+                "-fx-background-color: transparent; " +
+                "-fx-border-color: transparent; " +
+                "-fx-border-radius: 50%; " +
+                "-fx-border-width: 2;";
+
+        // Hover style (only arrow changes color)
+        String hoverStyle = "-fx-background-radius: 50%; " +
+                "-fx-min-width: 40px; " +
+                "-fx-min-height: 40px; " +
+                "-fx-font-size: 20pt; " +
+                "-fx-text-fill: #ff9900; " + // Orange glowing arrow
+                "-fx-background-color: transparent; " +
+                "-fx-border-color: transparent; " +
+                "-fx-border-radius: 50%; " +
+                "-fx-border-width: 2;";
+
+        backBtn.setStyle(normalStyle);
+
+        backBtn.setOnMouseEntered(e -> backBtn.setStyle(hoverStyle));
+        backBtn.setOnMouseExited(e -> backBtn.setStyle(normalStyle));
+
+        return backBtn;
     }
 
     private void showAlert(String title, String message) {

@@ -67,61 +67,50 @@ public class BorrowDashboard extends Application {
     }
 
     private VBox createSearchPanel() {
-            // Panel isi tombol dan input
-            VBox contentBox = new VBox(15);
-            contentBox.setAlignment(Pos.CENTER);
+        VBox contentBox = new VBox(15);
+        contentBox.setAlignment(Pos.CENTER);
 
-            Button backBtn = new Button("←");
-            backBtn.setStyle("-fx-background-radius: 50%; -fx-font-size: 16pt; -fx-background-color: red;");
-            backBtn.setOnAction(e -> {
-                if (previousStage != null) {
-                    // Close the current stage (BorrowDashboard)
-                    Stage currentStage = (Stage) backBtn.getScene().getWindow();
-                    currentStage.close();
+        // Use the new back button style
+        Button backBtn = createBackButton();
+        backBtn.setOnAction(e -> {
+            if (previousStage != null) {
+                Stage currentStage = (Stage) backBtn.getScene().getWindow();
+                currentStage.close();
+                StdDashboard stdDashboard = new StdDashboard();
+                stdDashboard.setCurrentUser(currentUser);
+                stdDashboard.start(previousStage);
+            }
+        });
 
-                    // Reopen the previous StdDashboard stage
-                    StdDashboard stdDashboard = new StdDashboard();
-                    stdDashboard.setCurrentUser(currentUser);
-                    stdDashboard.start(previousStage);
-                }
-            });
+        Label title = new Label("CARI BUKU");
+        title.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold;");
 
-            Label title = new Label("CARI BUKU");
-            title.setStyle("-fx-font-size: 24pt; -fx-font-weight: bold;");
+        TextField searchField = new TextField();
+        searchField.setPromptText("Masukkan nama buku/Author");
+        searchField.setStyle("-fx-background-radius: 25; -fx-padding: 10; -fx-font-size: 12pt;");
 
-            TextField searchField = new TextField();
-            searchField.setPromptText("Masukkan nama buku/Author");
-            searchField.setStyle("-fx-background-radius: 25; -fx-padding: 10; -fx-font-size: 12pt;");
+        // Use the new action button style
+        Button searchBtn = createActionButton("cari", "orange", "orange", "#ff8000");
+        searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
 
-            Button searchBtn = new Button("cari");
-            searchBtn.setStyle("-fx-background-radius: 25; -fx-background-color: orange; -fx-font-weight: bold; -fx-font-size: 14pt;");
-            searchBtn.setPrefWidth(200);
-            searchBtn.setPrefHeight(40);
-            searchBtn.setOnAction(e -> searchBooks(searchField.getText()));
+        Button pinjamBtn = createActionButton("pinjam", "white", "white", "#a0a0a0");
+        pinjamBtn.setOnAction(e -> handlePinjam());
 
-            Button pinjamBtn = new Button("pinjam");
-            pinjamBtn.setStyle("-fx-background-radius: 25; -fx-background-color: white; -fx-font-weight: bold; -fx-font-size: 14pt;");
-            pinjamBtn.setPrefWidth(200);
-            pinjamBtn.setPrefHeight(40);
-            pinjamBtn.setOnAction(e -> handlePinjam());
+        contentBox.getChildren().addAll(backBtn, title, searchField, searchBtn, pinjamBtn);
 
-            contentBox.getChildren().addAll(backBtn, title, searchField, searchBtn, pinjamBtn);
+        Label catatan = new Label("*untuk pengembalian buku langsung ke petugas perpustakaan");
+        catatan.setStyle("-fx-font-size: 10pt;");
+        catatan.setWrapText(true);
 
-            // Label catatan di bawah
-            Label catatan = new Label("*untuk pengembalian buku langsung ke petugas perpustakaan");
-            catatan.setStyle("-fx-font-size: 10pt;");
-            catatan.setWrapText(true);
+        BorderPane panel = new BorderPane();
+        panel.setPadding(new Insets(60));
+        panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 25;");
+        panel.setCenter(contentBox);
+        panel.setBottom(catatan);
+        BorderPane.setMargin(catatan, new Insets(20, 0, 0, 0));
 
-            // Bungkus semuanya dalam BorderPane
-            BorderPane panel = new BorderPane();
-            panel.setPadding(new Insets(60));
-            panel.setStyle("-fx-background-color: rgba(255,255,255,0.7); -fx-background-radius: 25;");
-            panel.setCenter(contentBox);
-            panel.setBottom(catatan);
-            BorderPane.setMargin(catatan, new Insets(20, 0, 0, 0)); // jarak atas dari catatan
-
-            return new VBox(panel);
-        }
+        return new VBox(panel);
+    }
 
 
     private TableView<PropertyBook> createTableView() {
@@ -233,6 +222,76 @@ public class BorrowDashboard extends Application {
         tableView.refresh();
 
         showAlert("Pinjam Buku", "Berhasil meminjam buku: " + selected.getTitle());
+    }
+
+    private Button createBackButton() {
+        Button backBtn = new Button("←");
+
+        // Normal style
+        String normalStyle = "-fx-background-radius: 50%;" +
+                "-fx-min-width: 50px;" +
+                "-fx-min-height: 50px;" +
+                "-fx-font-size: 30pt;" +
+                "-fx-text-fill: #171616;" +
+                "-fx-background-color: transparent;" +
+                "-fx-border-color: transparent;" +
+                "-fx-border-radius: 50%;" +
+                "-fx-border-width: 2px;";
+
+        // Hover style - only arrow changes color
+        String hoverStyle = "-fx-background-radius: 50%;" +
+                "-fx-min-width: 50px;" +
+                "-fx-min-height: 50px;" +
+                "-fx-font-size: 30pt;" +
+                "-fx-text-fill: #ff9900;" + // Orange glowing arrow
+                "-fx-background-color: transparent;" +
+                "-fx-border-color: transparent;" +
+                "-fx-border-radius: 50%;" +
+                "-fx-border-width: 2px;";
+
+        backBtn.setStyle(normalStyle);
+
+        backBtn.setOnMouseEntered(e -> backBtn.setStyle(hoverStyle));
+        backBtn.setOnMouseExited(e -> backBtn.setStyle(normalStyle));
+
+        return backBtn;
+    }
+
+    private Button createActionButton(String text, String bgColor, String borderColor, String hoverBorderColor) {
+        Button btn = new Button(text);
+
+        // Normal style
+        String normalStyle = "-fx-background-radius: 25;" +
+                "-fx-background-color: " + bgColor + ";" +
+                "-fx-text-fill: black;" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 14pt;" +
+                "-fx-border-color: " + borderColor + ";" +
+                "-fx-border-radius: 25;" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-pref-width: 200;" +
+                "-fx-pref-height: 40;";
+
+        // Hover style - only border changes
+        String hoverStyle = "-fx-background-radius: 25;" +
+                "-fx-background-color: " + bgColor + ";" +
+                "-fx-text-fill: black;" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 14pt;" +
+                "-fx-border-color: " + hoverBorderColor + ";" +
+                "-fx-border-radius: 25;" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-pref-width: 200;" +
+                "-fx-pref-height: 40;";
+
+        btn.setStyle(normalStyle);
+
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
+        return btn;
     }
 
 }

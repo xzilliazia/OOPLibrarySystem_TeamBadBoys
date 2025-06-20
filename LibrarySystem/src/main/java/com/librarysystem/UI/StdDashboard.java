@@ -57,8 +57,7 @@ public class StdDashboard extends Application {
         userLabel.setMaxWidth(Double.MAX_VALUE);
         userLabel.setAlignment(Pos.CENTER);
 
-        Button btnPinjam = new Button("PINJAM");
-        applyFont(btnPinjam, "14pt", true, "orange", "black");
+        Button btnPinjam = createHoverBorderButton("PINJAM", "orange", "orange", "#ff8000");
         btnPinjam.setOnAction(e -> {
             BorrowDashboard borrow = new BorrowDashboard();
             borrow.setCurrentUser(currentUser);
@@ -67,12 +66,10 @@ public class StdDashboard extends Application {
             stage.close();
         });
 
-        Button btnEditProfile = new Button("EDIT PROFILE");
-        applyFont(btnEditProfile, "14pt", true, "orange", "black");
+        Button btnEditProfile = createHoverBorderButton("EDIT PROFILE", "orange", "orange", "#ff8000");
         btnEditProfile.setOnAction(e -> handleEditProfile());
 
-        Button btnExit = new Button("KELUAR");
-        applyFont(btnExit, "14pt", true, "white", "black");
+        Button btnExit = createHoverBorderButton("KELUAR", "white", "white", "#a0a0a0");
         btnExit.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Konfirmasi Keluar");
@@ -191,12 +188,71 @@ public class StdDashboard extends Application {
         alert.showAndWait();
     }
 
-    private Button createStyledButton(String text, String color) {
+    private Button createStyledButton(String text, String bgColor, String borderColor, String hoverBorderColor) {
         Button btn = new Button(text);
-        btn.setStyle("-fx-font-weight: bold; " +
-                "-fx-background-radius: 20; -fx-border-radius: 20; " +
-                "-fx-border-color: " + color + "; -fx-padding: 10 20 10 20; " +
-                "-fx-background-color: " + color + "; -fx-text-fill: white;");
+
+        // Style normal
+        String normalStyle = "-fx-font-weight: bold; " +
+                "-fx-background-radius: 20; " +
+                "-fx-border-radius: 20; " +
+                "-fx-border-color: " + borderColor + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-padding: 10 20; " +
+                "-fx-background-color: " + bgColor + "; " +
+                "-fx-text-fill: white;";
+
+        // Style hover (hanya border yang berubah)
+        String hoverStyle = "-fx-font-weight: bold; " +
+                "-fx-background-radius: 20; " +
+                "-fx-border-radius: 20; " +
+                "-fx-border-color: " + hoverBorderColor + "; " +
+                "-fx-border-width: 2; " +
+                "-fx-padding: 10 20; " +
+                "-fx-background-color: " + bgColor + "; " +
+                "-fx-text-fill: white;";
+
+        btn.setStyle(normalStyle);
+
+        // Efek hover
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
+        return btn;
+    }
+
+    private Button createHoverBorderButton(String text, String bgColor, String borderColor, String hoverBorderColor) {
+        Button btn = new Button(text);
+
+        // Style normal
+        String normalStyle = "-fx-font-family: 'Poppins';" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 14pt;" +
+                "-fx-background-color: " + bgColor + ";" +
+                "-fx-text-fill: black;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: " + borderColor + ";" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10 30;";
+
+        // Style hover
+        String hoverStyle = "-fx-font-family: 'Poppins';" +
+                "-fx-font-weight: bold;" +
+                "-fx-font-size: 14pt;" +
+                "-fx-background-color: " + bgColor + ";" +
+                "-fx-text-fill: black;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: " + hoverBorderColor + ";" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10 30;";
+
+        btn.setStyle(normalStyle);
+
+        // Efek hover
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
         return btn;
     }
 
@@ -220,7 +276,12 @@ public class StdDashboard extends Application {
         majorField.setText(userToEdit.getMajor());
 
 
-        Button submit = createStyledButton("Simpan Perubahan", "#FFA500");
+        Button submit = createStyledButton(
+                "Simpan Perubahan",
+                "#4CAF50",
+                "#4CAF50",
+                "#2E7D32"
+        );
         submit.setOnAction(e -> {
             try {
                 String usernameText = usernameField.getText();

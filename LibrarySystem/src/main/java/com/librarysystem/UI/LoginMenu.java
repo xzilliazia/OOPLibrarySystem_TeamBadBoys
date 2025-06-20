@@ -95,8 +95,8 @@ public class LoginMenu {
         errorLabel.setAlignment(Pos.CENTER);
         errorLabel.setTextAlignment(TextAlignment.CENTER);
 
-        Button loginButton = createButton("MASUK", 230, 53.93, "white", "white");
-        Button registerButton = createButton("REGISTER", 230, 53.93, "yellow", "yellow");
+        Button loginButton = createLoginButton("MASUK", 230, 53.93);
+        Button registerButton = createRegisterButton("REGISTER", 230, 53.93);
 
         VBox buttonBox = new VBox(10, loginButton, registerButton);
         buttonBox.setLayoutX(151.5);
@@ -131,30 +131,112 @@ public class LoginMenu {
         tf.setLayoutY(y);
         tf.setPrefSize(421, 53.93);
         tf.setFont(Font.font("Tahoma", 15));
-        tf.setStyle("-fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: lightgray; -fx-padding: 10; -fx-background-color: white;");
+
+        String normalStyle = "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: lightgray;" +
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: white;";
+
+        String hoverStyle = "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: #a0a0a0;" + // Warna border saat hover
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: white;";
+
+        String focusedStyle = "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: #f3d95f;" + // Warna border saat focus (biru)
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: white;";
+
+        tf.setStyle(normalStyle);
+
+        tf.setOnMouseEntered(e -> {
+            if (!tf.isFocused()) {
+                tf.setStyle(hoverStyle);
+            }
+        });
+
+        tf.setOnMouseExited(e -> {
+            if (!tf.isFocused()) {
+                tf.setStyle(normalStyle);
+            }
+        });
+
+        tf.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal) {
+                tf.setStyle(focusedStyle); // Saat focus (klik/select)
+            } else {
+                tf.setStyle(normalStyle); // Saat kehilangan focus
+            }
+        });
+
         return tf;
     }
 
+    private Button createLoginButton(String text, double width, double height) {
+        Button btn = new Button(text);
+        btn.setPrefSize(width, height);
 
-private Button createButton(String text, double width, double height, String bgColor, String borderColor) {
-    Button btn = new Button(text);
-    btn.setPrefSize(width, height);
+        String normalStyle = "-fx-font-weight: bold;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: white;" +
+                "-fx-border-width: 2;" +  // Tambahkan ketebalan border
+                "-fx-padding: 10;" +
+                "-fx-background-color: white;" +
+                "-fx-text-fill: black;";
 
-    String normalStyle = "-fx-font-weight: bold;" +
-            "-fx-background-radius: 20;" +
-            "-fx-border-radius: 20;" +
-            "-fx-border-color: " + borderColor + ";" +
-            "-fx-padding: 10;" +
-            "-fx-background-color: " + bgColor +";" +
-            "-fx-text-fill: black;";
+        String hoverStyle = "-fx-font-weight: bold;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: #a0a0a0;" +  // Hanya ubah border color
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: white;" +  // Background tetap sama
+                "-fx-text-fill: black;";
 
-    btn.setStyle(normalStyle);
+        btn.setStyle(normalStyle);
 
-    btn.setOnMouseEntered(e -> btn.setStyle(normalStyle));
-    btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
 
-    return btn;
-}
+        return btn;
+    }
+
+    private Button createRegisterButton(String text, double width, double height) {
+        Button btn = new Button(text);
+        btn.setPrefSize(width, height);
+
+        String normalStyle = "-fx-font-weight: bold;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: yellow;" +
+                "-fx-border-width: 2;" +  // Tambahkan ketebalan border
+                "-fx-padding: 10;" +
+                "-fx-background-color: yellow;" +
+                "-fx-text-fill: black;";
+
+        String hoverStyle = "-fx-font-weight: bold;" +
+                "-fx-background-radius: 20;" +
+                "-fx-border-radius: 20;" +
+                "-fx-border-color: #ffcc00;" +  // Hanya ubah border color
+                "-fx-border-width: 2;" +
+                "-fx-padding: 10;" +
+                "-fx-background-color: yellow;" +  // Background tetap sama
+                "-fx-text-fill: black;";
+
+        btn.setStyle(normalStyle);
+
+        btn.setOnMouseEntered(e -> btn.setStyle(hoverStyle));
+        btn.setOnMouseExited(e -> btn.setStyle(normalStyle));
+
+        return btn;
+    }
 
     private void showAlert(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
